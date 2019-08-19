@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/screen_background"
+    android:orientation="vertical"
+    android:padding="25dp"
+    tools:context=".ui.signup.SignUpActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="sign up now"
+                android:textSize="30sp"
+             android:layout_gravity="center"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="center's information  "
+                android:textSize="24sp"
+                />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_logo"
+
+                android:layout_marginTop="15dp"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/nameedit"
+                android:hint="name"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp" />
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:id="@+id/addressedit"
+                android:maxLines="10"
+                android:hint="address"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fromedit"
+
+                android:hint="from am"
+                android:inputType="number"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/toedit"
+
+                android:hint="to  pm"
+                android:inputType="number"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/emailedit"
+
+                android:hint="email"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/passwordedit"
+
+                android:hint="password"
+                android:inputType="textPassword"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp" />
+
+
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/universitySpinner"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="22dp" />
+
+
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/nextBtn"
+                android:layout_gravity="center"
+                android:layout_marginTop="35dp"
+                android:background="@drawable/custom_button"
+                android:paddingStart="35dp"
+                android:paddingEnd="35dp"
+                android:text="next"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
