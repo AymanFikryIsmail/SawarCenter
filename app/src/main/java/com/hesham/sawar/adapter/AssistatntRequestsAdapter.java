@@ -81,7 +81,7 @@ public class AssistatntRequestsAdapter extends RecyclerView.Adapter<AssistatntRe
             acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    acceptAssistants(facultyPojo.getId());
+                    acceptAssistants(facultyPojo);
 
                 }
             });
@@ -89,7 +89,7 @@ public class AssistatntRequestsAdapter extends RecyclerView.Adapter<AssistatntRe
             refuseBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    rejectAssistants(facultyPojo.getId());
+                    rejectAssistants(facultyPojo);
 
                 }
             });
@@ -102,20 +102,18 @@ public class AssistatntRequestsAdapter extends RecyclerView.Adapter<AssistatntRe
     }
 
 
-    public void acceptAssistants(int assistantid) {//prefManager.getCenterId()
-        Call<AssistantResponse> call = Apiservice.getInstance().apiRequest.
-                acceptAssistants(assistantid);
-        call.enqueue(new Callback<AssistantResponse>() {
+    public void acceptAssistants(final UserPojo userPojo) {//prefManager.getCenterId()
+        Call<Object> call = Apiservice.getInstance().apiRequest.
+                acceptAssistants(userPojo.getId());
+        call.enqueue(new Callback<Object>() {
             @Override
-            public void onResponse(Call<AssistantResponse> call, Response<AssistantResponse> response) {
-                if (response.body().status && response.body().cc_id != null) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    updateList(response.body().cc_id);
-                }
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                facultyPojos.remove(userPojo);
+                notifyDataSetChanged();
             }
 
             @Override
-            public void onFailure(Call<AssistantResponse> call, Throwable t) {
+            public void onFailure(Call<Object> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
 
             }
@@ -123,21 +121,18 @@ public class AssistatntRequestsAdapter extends RecyclerView.Adapter<AssistatntRe
     }
 
 
-    public void rejectAssistants(int assistantid) {//prefManager.getCenterId()
-        Call<AssistantResponse> call = Apiservice.getInstance().apiRequest.
-                rejectAssistants(assistantid);
-        call.enqueue(new Callback<AssistantResponse>() {
+    public void rejectAssistants(final UserPojo userPojo) {//prefManager.getCenterId()
+        Call<Object> call = Apiservice.getInstance().apiRequest.
+                rejectAssistants(userPojo.getId());
+        call.enqueue(new Callback<Object>() {
             @Override
-            public void onResponse(Call<AssistantResponse> call, Response<AssistantResponse> response) {
-                if (response.body().status && response.body().cc_id != null) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    updateList(response.body().cc_id);
-
-                }
+            public void onResponse(Call<Object> call, Response<Object> response) {
+               facultyPojos.remove(userPojo);
+                notifyDataSetChanged();
             }
 
             @Override
-            public void onFailure(Call<AssistantResponse> call, Throwable t) {
+            public void onFailure(Call<Object> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
 
             }

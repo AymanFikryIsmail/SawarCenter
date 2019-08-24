@@ -61,6 +61,7 @@ public class SignUpOwnerActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
                 prefManager.setUserPojo(userPojo);
+                prefManager.setToken("registered");
 
                 Intent i = new Intent(SignUpOwnerActivity.this, HomeActivity.class);
                     startActivity(i);

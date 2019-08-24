@@ -65,7 +65,20 @@ public class AssistantsFragment extends Fragment {
         getAssistants();
         return view;
     }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
 
+        // Make sure that we are currently visible
+        if (this.isVisible()) {
+//            getAssistants();
+            // If we are becoming invisible, then...
+            if (!isVisibleToUser) {
+            }else {
+                getAssistants();
+            }
+        }
+    }
 
 
     public void getAssistants() {//prefManager.getCenterId()
@@ -76,6 +89,7 @@ public class AssistantsFragment extends Fragment {
             public void onResponse(Call<AssistantResponse> call, Response<AssistantResponse> response) {
                 if (response.body().status  && response.body().cc_id != null) {
                     Log.d("tag", "articles total result:: " + response.body().getMessage());
+                    facultyPojos.clear();
                     facultyPojos.addAll(response.body().cc_id);
                     facultySelectAdapter = new AssistatntAdapter(getContext(),facultyPojos);
                     facultyRecyclerView.setAdapter(facultySelectAdapter);

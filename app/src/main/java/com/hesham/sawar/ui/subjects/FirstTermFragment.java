@@ -1,6 +1,7 @@
 package com.hesham.sawar.ui.subjects;
 
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,7 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hesham.sawar.R;
 import com.hesham.sawar.adapter.FacultyHomeAdapter;
 import com.hesham.sawar.adapter.FacultySelectAdapter;
@@ -21,6 +26,7 @@ import com.hesham.sawar.data.model.SubjectPojo;
 import com.hesham.sawar.data.response.FacultyResponse;
 import com.hesham.sawar.data.response.SubjectResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
+import com.hesham.sawar.ui.home.HomeActivity;
 import com.hesham.sawar.ui.home.HomeFragment;
 import com.hesham.sawar.utils.PrefManager;
 
@@ -34,7 +40,8 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FirstTermFragment extends Fragment {
+public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.EventListener{
+
 
     private List<SubjectPojo> facultyPojos;
 
@@ -45,7 +52,7 @@ public class FirstTermFragment extends Fragment {
     private int years;
 
     public FirstTermFragment(int years) {
-        this.years=years;
+        this.years = years;
     }
 
 
@@ -53,33 +60,39 @@ public class FirstTermFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_first_term, container, false);
-        prefManager=new PrefManager(getContext());
-        facultyRecyclerView=view.findViewById(R.id.termRecyclerView);
+        View view = inflater.inflate(R.layout.fragment_first_term, container, false);
+        prefManager = new PrefManager(getContext());
+        facultyRecyclerView = view.findViewById(R.id.termRecyclerView);
         facultyPojos = new ArrayList<>();
 
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext() , 2);
+        FloatingActionButton fab=view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
+            }
+        });
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         facultyRecyclerView.setLayoutManager(gridLayoutManager);
-        facultySelectAdapter = new SubjectHomeAdapter(getContext(),facultyPojos);
+        facultySelectAdapter = new SubjectHomeAdapter(getContext(), this,facultyPojos,years, 1);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
         getSubjects();
         return view;
     }
 
 
-
     public void getSubjects() {//prefManager.getCenterId()
-        SubjectPojo subjectPojo=new SubjectPojo(1 ,prefManager.getFacultyId(), years,1);
+        SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getFacultyId(), years, 1);
         Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
                 getAllSubjects(subjectPojo);
         call.enqueue(new Callback<SubjectResponse>() {
             @Override
             public void onResponse(Call<SubjectResponse> call, Response<SubjectResponse> response) {
-                if (response.body().status  && response.body().cc_id != null) {
+                if (response.body().status && response.body().cc_id != null) {
                     Log.d("tag", "articles total result:: " + response.body().getMessage());
+                    facultyPojos.clear();
                     facultyPojos.addAll(response.body().cc_id);
-                    facultySelectAdapter = new SubjectHomeAdapter(getContext(),facultyPojos);
+                    facultySelectAdapter = new SubjectHomeAdapter(getContext(),FirstTermFragment.this, facultyPojos ,years, 1);
                     facultyRecyclerView.setAdapter(facultySelectAdapter);
                 }
             }
@@ -92,4 +105,55 @@ public class FirstTermFragment extends Fragment {
         });
     }
 
+
+
+    private  void showDialog(){
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        dialog.setContentView(R.layout.dialog_add_subject);
+        Button dialogButton = dialog.findViewById(R.id.addsubject);
+        final EditText subname = dialog.findViewById(R.id.subjectname);
+
+
+        // if button is clicked, close the custom dialog
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addSubjects(subname.getText().toString());
+                dialog.dismiss();
+//                Intent intent=new Intent(getContext(), MainActivity.class);
+//                startActivity(intent);
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void addSubjects(String name) {//prefManager.getCenterId()
+        SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getFacultyId(), years, 1 ,name);
+        Call<Object> call = Apiservice.getInstance().apiRequest.
+                addSubjects(subjectPojo);
+        call.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+
+                getSubjects();
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                Log.d("tag", "articles total result:: " + t.getMessage());
+
+            }
+        });
+    }
+
+    @Override
+    public void onEvent(Fragment data) {
+        ((HomeActivity)getActivity()).loadFragment(data);
+
+    }
 }

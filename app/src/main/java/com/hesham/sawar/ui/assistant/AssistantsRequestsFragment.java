@@ -78,7 +78,19 @@ public class AssistantsRequestsFragment extends Fragment {
     }
 
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
 
+        // Make sure that we are currently visible
+        if (this.isVisible()) {
+            // If we are becoming invisible, then...
+            if (!isVisibleToUser) {
+            }else {
+                getAllAssistantsRequests();
+            }
+        }
+    }
     public void getAllAssistantsRequests() {//prefManager.getCenterId()
         Call<AssistantResponse> call = Apiservice.getInstance().apiRequest.
                 getAllAssistantsRequests(prefManager.getCenterId());
@@ -87,6 +99,7 @@ public class AssistantsRequestsFragment extends Fragment {
             public void onResponse(Call<AssistantResponse> call, Response<AssistantResponse> response) {
                 if (response.body().status  && response.body().cc_id != null) {
                     Log.d("tag", "articles total result:: " + response.body().getMessage());
+                    facultyPojos.clear();
                     facultyPojos.addAll(response.body().cc_id);
                     facultySelectAdapter = new AssistatntRequestsAdapter(getContext(),facultyPojos);
                     facultyRecyclerView.setAdapter(facultySelectAdapter);

@@ -48,6 +48,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/signin"
         android:text="sign in"
         android:textSize="20sp"
         android:textColor="@color/white"
@@ -76,7 +77,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/gotoRegister"
         android:layout_marginTop="20dp"
         android:text="Create account?"
         android:textColor="@color/white"
@@ -87,7 +87,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/gotosignup"
+        android:id="@+id/gotoRegister"
         android:text="Sign up"
         android:textSize="20sp"
         android:textColor="@color/white"

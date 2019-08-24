@@ -3,6 +3,7 @@ package com.hesham.sawar.data.response;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.annotations.SerializedName;
 import com.hesham.sawar.data.model.UserPojo;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ public class AssistantResponse {
     public final boolean status;
 
     @Nullable
+    @SerializedName("data")
     public final ArrayList<UserPojo> cc_id;
 
     @Nullable

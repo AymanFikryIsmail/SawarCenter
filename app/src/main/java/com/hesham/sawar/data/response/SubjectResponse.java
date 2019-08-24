@@ -14,7 +14,7 @@ public class SubjectResponse {
     public final boolean status;
 
     @Nullable
-//    @SerializedName("data")
+    @SerializedName("data")
     public final ArrayList<SubjectPojo> cc_id;
 
     @Nullable

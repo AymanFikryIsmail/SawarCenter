@@ -1,4 +1,4 @@
-package com.hesham.sawar.ui;
+package com.hesham.sawar.ui.center_data;
 
 import androidx.appcompat.app.AppCompatActivity;
 

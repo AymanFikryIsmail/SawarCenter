@@ -9,12 +9,14 @@ import java.util.Date;
 
 public class UserPojo implements Serializable {
 
+    private int id;
     private int cc_id;
     private String name;
     private String phone;
     private String email;
     private int type;
 
+    @SerializedName("passwd")
     private String password;
     private String address;
     private String start;
@@ -55,7 +57,7 @@ public class UserPojo implements Serializable {
     }
 
     public int getId() {
-        return cc_id;
+        return id;
     }
 
     public String getPassword() {

@@ -17,6 +17,11 @@ import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
 import com.hesham.sawar.R;
+import com.hesham.sawar.ui.assistant.AssistantsActivity;
+import com.hesham.sawar.ui.assistant.AssistantsFragment;
+import com.hesham.sawar.ui.order.OrderActivity;
+import com.hesham.sawar.ui.order.OrderFragment;
+import com.hesham.sawar.utils.PrefManager;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -26,11 +31,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.Menu;
+import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     BottomNavigationView navigation;
 
+    PrefManager prefManager;
     NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +45,7 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        prefManager=new PrefManager(this);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
          navigationView = findViewById(R.id.nav_view);
 
@@ -79,12 +79,17 @@ public class HomeActivity extends AppCompatActivity
                 case R.id.home_tab:
                     HomeFragment newsFragment = new HomeFragment();
                     loadFragment(newsFragment);
+                    break;
                 case R.id.orders_tab:
-                    HomeFragment s = new HomeFragment();
-                    loadFragment(s);
-                    return true;
+                    if (prefManager.getType()==1) {
+                        OrderFragment s = new OrderFragment();
+                        loadFragment(s);
+                    }else {
+                        Toast.makeText(HomeActivity.this, "available for owner only " ,Toast.LENGTH_LONG).show();
+                    }
+                    break;
             }
-            return false;
+            return true;
         }
     };
 
@@ -136,8 +141,13 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.centerdata) {
             // Handle the camera action
+        }else if (id==R.id.history){
+            HistoryFragment s = new HistoryFragment();
+            loadFragment(s);
+        }else if (id==R.id.assistant){
+           Intent intent=new Intent(this, AssistantsActivity.class);
+           startActivity(intent);
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

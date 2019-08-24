@@ -82,7 +82,7 @@ public class AssistatntAdapter extends RecyclerView.Adapter<AssistatntAdapter.My
                 deleteAssistant.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        deleteAssistants(facultyPojo.getId());
+                        deleteAssistants(facultyPojo);
                     }
                 });
             }
@@ -95,21 +95,18 @@ public class AssistatntAdapter extends RecyclerView.Adapter<AssistatntAdapter.My
 
 
 
-    public void deleteAssistants(int assistantid) {//prefManager.getCenterId()
-        Call<AssistantResponse> call = Apiservice.getInstance().apiRequest.
-                deleteAssistants(assistantid);
-        call.enqueue(new Callback<AssistantResponse>() {
+    public void deleteAssistants(final UserPojo userPojo) {//prefManager.getCenterId()
+        Call<Object> call = Apiservice.getInstance().apiRequest.
+                deleteAssistants(userPojo.getId());
+        call.enqueue(new Callback<Object>() {
             @Override
-            public void onResponse(Call<AssistantResponse> call, Response<AssistantResponse> response) {
-                if (response.body().status && response.body().cc_id != null) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    updateList(response.body().cc_id);
-
-                }
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                facultyPojos.remove(userPojo);
+                notifyDataSetChanged();
             }
 
             @Override
-            public void onFailure(Call<AssistantResponse> call, Throwable t) {
+            public void onFailure(Call<Object> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
 
             }

@@ -55,5 +55,7 @@
 
     <color name= "brown">#3d3d3d</color>
     <color name= "grey">#f1f1f1</color>
+    <color name="textcolor1">#de000000</color>
+    <color name="textcolor2">#99000000</color>
 
 </resources>

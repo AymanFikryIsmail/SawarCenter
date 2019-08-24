@@ -35,6 +35,16 @@ public class PrefManager {
         editor.commit();
     }
 
+    public int getSubjectId() {
+        return pref.getInt("SubjectId", 0);
+    }
+
+    public void setSubjectId(int SubjectId) {
+        editor.putInt("SubjectId", SubjectId);
+        editor.commit();
+    }
+
+
     public int getFacultyId() {
         return pref.getInt("FacultyId", 0);
     }
@@ -43,7 +53,6 @@ public class PrefManager {
         editor.putInt("FacultyId", FacultyId);
         editor.commit();
     }
-
 
     public int getType() {
         return pref.getInt("type", 0);

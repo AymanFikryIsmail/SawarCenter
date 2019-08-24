@@ -36,13 +36,13 @@ public class ChooseTypeActivity extends AppCompatActivity implements View.OnClic
         switch (view.getId()) {
             case R.id.gotoowner:
 
-                prefManager.setType(0);
+                prefManager.setType(1);
                 Intent i = new Intent(this, SignUpActivity.class);
                 startActivity(i);
                 break;
             case R.id.gotoassistant:
 
-                prefManager.setType(1);
+                prefManager.setType(0);
                 Intent intent = new Intent(this, SignUpActivity.class);
                 startActivity(intent);
                 break;
