@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#701a9b</color>
-    <color name="colorPrimaryDark">#701a9b</color>
+    <color name="colorPrimary">#01579b</color>
+    <color name="colorPrimaryDark">#01579b</color>
     <color name="colorAccent">#D81B60</color>
 
     <color name="center">#707070</color>
@@ -24,6 +24,7 @@
     <color name="faceBookLoginBtn">#425BB4</color>
     <color name="textColorHint">#FFFFFF</color>
     <color name="googlePlusLoginBtn">#D34836</color>
+    <color name="hometabselcet">#16ffff</color>
 
 
 
@@ -55,6 +56,8 @@
 
     <color name= "brown">#3d3d3d</color>
     <color name= "grey">#f1f1f1</color>
+    <color name= "grey1">#99000000</color>
+
     <color name="textcolor1">#de000000</color>
     <color name="textcolor2">#99000000</color>
 

@@ -1,74 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:padding="10dp">
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="0dp"
-        android:layout_weight="6"
-        android:layout_height="wrap_content"
-     >
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/papername"
-        android:text="name  : aa"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:textColor="@color/textcolor1"
-        android:layout_marginBottom="10dp"
-        />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:id="@+id/paperdate"
-            android:text="name  : aa"
-            android:textSize="12sp"
-               android:textColor="@color/textcolor2"
-            />
+        android:orientation="vertical">
 
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/papername"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-            android:id="@+id/paperpages"
+            android:layout_marginBottom="10dp"
             android:text="name  : aa"
-            android:textSize="12sp"
-            android:textColor="@color/textcolor2"
-            />
+            android:textColor="@color/textcolor1"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="0dp"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:orientation="horizontal">
 
-            android:id="@+id/paperprice"
-            android:text="name  : aa"
-            android:textSize="12sp"
-            android:textColor="@color/textcolor2"
-            />
+            <TextView
+                android:id="@+id/paperdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="nDate: 25/1/19"
+                android:textColor="@color/textcolor2"
+                android:textSize="12sp"
+                android:layout_marginEnd="30dp"
+                />
+
+            <TextView
+                android:id="@+id/paperpages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/paperdate"
+                android:layout_weight="1"
+                android:text="Pages: 20"
+                android:textColor="@color/textcolor2"
+                android:textSize="12sp"
+                android:layout_marginEnd="30dp"
+                />
+
+            <TextView
+                android:id="@+id/paperprice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/paperpages"
+
+                android:layout_weight="1"
+                android:text="Price: 5"
+                android:textColor="@color/textcolor2"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 
-</LinearLayout>
-    <TextView
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:textColor="@color/white"
+    <ImageView
         android:id="@+id/popupMenuTxt"
-        android:text=":"
-        android:textSize="28sp"
-        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
+        android:layout_centerInParent="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/icon_more_sharp"
         />
-</LinearLayout>
+</RelativeLayout>

@@ -14,6 +14,7 @@ import com.hesham.sawar.ui.assistant.AssistantsActivity;
 import com.hesham.sawar.ui.home.HomeActivity;
 import com.hesham.sawar.ui.login.LoginActivity;
 import com.hesham.sawar.ui.signup.SignUpActivity;
+import com.hesham.sawar.ui.signup.SignUpWithFacultyActivity;
 import com.hesham.sawar.utils.PrefManager;
 
 import retrofit2.Call;
@@ -45,7 +46,7 @@ public class SplashActivity extends AppCompatActivity {
             finish();
         }
         else {
-            Intent i=new Intent(this, AssistantsActivity.class);
+            Intent i=new Intent(this, HomeActivity.class);
             startActivity(i);
             finish();
         }

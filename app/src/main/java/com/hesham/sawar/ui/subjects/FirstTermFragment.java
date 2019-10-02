@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hesham.sawar.R;
@@ -23,9 +25,11 @@ import com.hesham.sawar.adapter.FacultySelectAdapter;
 import com.hesham.sawar.adapter.SubjectHomeAdapter;
 import com.hesham.sawar.data.model.FacultyPojo;
 import com.hesham.sawar.data.model.SubjectPojo;
+import com.hesham.sawar.data.response.CustomResponse;
 import com.hesham.sawar.data.response.FacultyResponse;
 import com.hesham.sawar.data.response.SubjectResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
+import com.hesham.sawar.networkmodule.NetworkUtilities;
 import com.hesham.sawar.ui.home.HomeActivity;
 import com.hesham.sawar.ui.home.HomeFragment;
 import com.hesham.sawar.utils.PrefManager;
@@ -50,6 +54,7 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
 
     PrefManager prefManager;
     private int years;
+    TextView emptyLayout;
 
     public FirstTermFragment(int years) {
         this.years = years;
@@ -64,7 +69,8 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
         prefManager = new PrefManager(getContext());
         facultyRecyclerView = view.findViewById(R.id.termRecyclerView);
         facultyPojos = new ArrayList<>();
-
+        emptyLayout=view.findViewById(R.id.emptyLayout);
+        hideEmpty();
         FloatingActionButton fab=view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +82,11 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
         facultyRecyclerView.setLayoutManager(gridLayoutManager);
         facultySelectAdapter = new SubjectHomeAdapter(getContext(), this,facultyPojos,years, 1);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
-        getSubjects();
+        if (NetworkUtilities.isOnline(getContext())) {
+            getSubjects();
+        } else {
+            Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
+        }
         return view;
     }
 
@@ -92,6 +102,11 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
                     Log.d("tag", "articles total result:: " + response.body().getMessage());
                     facultyPojos.clear();
                     facultyPojos.addAll(response.body().cc_id);
+                    if (facultyPojos.size()==0){
+                        showEmpty();
+                    }else {
+                        hideEmpty();
+                    }
                     facultySelectAdapter = new SubjectHomeAdapter(getContext(),FirstTermFragment.this, facultyPojos ,years, 1);
                     facultyRecyclerView.setAdapter(facultySelectAdapter);
                 }
@@ -100,6 +115,8 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
             @Override
             public void onFailure(Call<SubjectResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                showEmpty();
 
             }
         });
@@ -109,12 +126,12 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
 
     private  void showDialog(){
         final Dialog dialog = new Dialog(getContext());
-        dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+        Window window = dialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         dialog.setContentView(R.layout.dialog_add_subject);
-        Button dialogButton = dialog.findViewById(R.id.addsubject);
+        TextView dialogButton = dialog.findViewById(R.id.addsubject);
         final EditText subname = dialog.findViewById(R.id.subjectname);
 
 
@@ -122,8 +139,12 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addSubjects(subname.getText().toString());
-                dialog.dismiss();
+                if (NetworkUtilities.isOnline(getContext())) {
+                    addSubjects(subname.getText().toString());
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
+                }
 //                Intent intent=new Intent(getContext(), MainActivity.class);
 //                startActivity(intent);
             }
@@ -134,18 +155,21 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
 
     public void addSubjects(String name) {//prefManager.getCenterId()
         SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getFacultyId(), years, 1 ,name);
-        Call<Object> call = Apiservice.getInstance().apiRequest.
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
                 addSubjects(subjectPojo);
-        call.enqueue(new Callback<Object>() {
+        call.enqueue(new Callback<CustomResponse>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
+            public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
+                if (response.body().status && response.body().data != null) {
 
-                getSubjects();
+                    getSubjects();
+            }
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<CustomResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -155,5 +179,24 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
     public void onEvent(Fragment data) {
         ((HomeActivity)getActivity()).loadFragment(data);
 
+    }
+
+    @Override
+    public void onCheckForEmpty() {
+        checkForEmpty();
+    }
+
+    public  void checkForEmpty(){
+        if (facultyPojos.size()==0){
+            showEmpty();
+        }else {
+            hideEmpty();
+        }
+    }
+    void showEmpty(){
+        emptyLayout.setVisibility(View.VISIBLE);
+    }
+    void hideEmpty(){
+        emptyLayout.setVisibility(View.GONE);
     }
 }

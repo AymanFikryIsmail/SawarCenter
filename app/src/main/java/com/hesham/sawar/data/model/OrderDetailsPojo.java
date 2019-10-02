@@ -22,6 +22,17 @@ public class OrderDetailsPojo {
     @SerializedName("paper_type")
     private String type;
 
+    public OrderDetailsPojo(String name, String subject, int page, int sub_id, int p_id, int o_id, double price, String type) {
+        this.name = name;
+        this.subject = subject;
+        this.page = page;
+        this.sub_id = sub_id;
+        this.p_id = p_id;
+        this.o_id = o_id;
+        this.price = price;
+        this.type = type;
+    }
+
     public int getId() {
         return id;
     }

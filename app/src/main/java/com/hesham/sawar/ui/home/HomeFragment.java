@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.hesham.sawar.R;
 import com.hesham.sawar.adapter.FacultyHomeAdapter;
@@ -20,6 +22,7 @@ import com.hesham.sawar.adapter.FacultySelectAdapter;
 import com.hesham.sawar.data.model.FacultyPojo;
 import com.hesham.sawar.data.response.FacultyResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
+import com.hesham.sawar.networkmodule.NetworkUtilities;
 import com.hesham.sawar.ui.signup.SignUpActivity;
 import com.hesham.sawar.utils.PrefManager;
 
@@ -39,6 +42,8 @@ public class HomeFragment extends Fragment  implements FacultyHomeAdapter.EventL
 
     private RecyclerView facultyRecyclerView;
     private FacultyHomeAdapter facultySelectAdapter;
+    private FrameLayout progress_view;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -58,7 +63,12 @@ public class HomeFragment extends Fragment  implements FacultyHomeAdapter.EventL
         facultyRecyclerView.setLayoutManager(gridLayoutManager);
         facultySelectAdapter = new FacultyHomeAdapter(getContext(),this,facultyPojos);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
-        getFaculties();
+        progress_view=view.findViewById(R.id.progress_view);
+        if (NetworkUtilities.isOnline(getContext())) {
+            getFaculties();
+        } else {
+            Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
+        }
         return view;
     }
 
@@ -68,20 +78,26 @@ public class HomeFragment extends Fragment  implements FacultyHomeAdapter.EventL
     public void getFaculties() {
         Call<FacultyResponse> call = Apiservice.getInstance().apiRequest.
                 getHomeFaculties(prefManager.getCenterId());
+        progress_view.setVisibility(View.VISIBLE);
+
         call.enqueue(new Callback<FacultyResponse>() {
             @Override
             public void onResponse(Call<FacultyResponse> call, Response<FacultyResponse> response) {
                 if (response.body().status  && response.body().cc_id != null) {
                     Log.d("tag", "articles total result:: " + response.body().getMessage());
+					facultyPojos.clear();
                     facultyPojos.addAll(response.body().cc_id);
                     facultySelectAdapter = new FacultyHomeAdapter(getContext(),HomeFragment.this,facultyPojos);
                     facultyRecyclerView.setAdapter(facultySelectAdapter);
+                    progress_view.setVisibility(View.GONE);
+
                 }
             }
 
             @Override
             public void onFailure(Call<FacultyResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
+                progress_view.setVisibility(View.GONE);
 
             }
         });

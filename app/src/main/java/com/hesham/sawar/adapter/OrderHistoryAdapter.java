@@ -78,10 +78,14 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             }
 
             public void bind(final OrderPojo orderPojo) {
-                ordername.setText("Order number        "+orderPojo.getId());
+                ordername.setText("Order number :               " +orderPojo.getNum() + "" + orderPojo.getDay() + orderPojo.getVar());
                 date.setText("date: "+orderPojo.getDate());
-                time.setText("Time: "+orderPojo.getDate());
-                price.setText("price:"+orderPojo.getPrice());
+//                time.setText("Time: "+orderPojo.getDate());
+                price.setText(""+orderPojo.getTotal_price());
+                Date date = new Date(orderPojo.getLongDate());
+                SimpleDateFormat df2 = new SimpleDateFormat("hh:mm");
+                String dateText = df2.format(date);
+                time.setText("Time: " + dateText);
 
                 deleteBtn.setVisibility(View.GONE);
                 canceledOrder.setVisibility(View.GONE);

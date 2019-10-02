@@ -38,7 +38,7 @@ public class YearHomeAdapter extends RecyclerView.Adapter<YearHomeAdapter.MyView
         @Override
         public YearHomeAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.row_faultyhome, parent, false);
+                    .inflate(R.layout.row_year, parent, false);
             return new YearHomeAdapter.MyViewHolder(itemView);
         }
 

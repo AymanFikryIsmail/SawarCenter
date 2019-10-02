@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgrond"
+    tools:context=".ui.home.HistoryFragment">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="25dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15sp"
+        android:text="Help"
+        android:textSize="30sp"
+        android:textStyle="bold|italic"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+
+            android:text="Q: how to add an assistant? \n
+A: the assistant should sign up in the app as an assistant and choose the copy center that he wants to work for after that a message is sent to the owner in the assistants section where he can accept or refuse the assistant’s request.
+\n\n
+Q: how to remove an assistant?\n
+A: the owner only has the ability to remove an assistant by going to the assistants section and remove the assistant that he wants to remove.
+\n\n
+Q: can I change the faculties that the copy center serve?\n
+A: yes in the side bar menu go to center’s data and there you can change the faculties. (only the owner can do that)
+\n\n
+Q: what is the order number related to?\n
+A: the order number is divided into 3 parts eg. 13 D M
+\n 1)	The number is a systematic number starts from 1 at 12 AM and increases until the next 12 AM.
+\n 2)	The first letter indicates in which day the order has been made starting from Saturday (letter A) and ends with Friday (letter G).
+\n 3)	The second letter is a random letter to make the order number unique.\n
+For any information or feedbacks contact us at sawar.customercare@gmail.com
+Or visit our Facebook page www.facebook.com/sawarservice
+"/>
+    </LinearLayout>
+
+    </ScrollView>
+</RelativeLayout>
+

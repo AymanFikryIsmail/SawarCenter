@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class UserPojo implements Serializable {
@@ -16,14 +17,18 @@ public class UserPojo implements Serializable {
     private String email;
     private int type;
 
-    @SerializedName("passwd")
     private String password;
+    private String passwd;
+
     private String address;
     private String start;
     private String end;
+    private double rate;
 
     @SerializedName("univ_id")
     private int univ;
+    private String university;
+    private ArrayList<FacultyPojo> faculties;
 
     private String logo;
     public UserPojo() {
@@ -51,7 +56,16 @@ public class UserPojo implements Serializable {
         this.univ = univ;
         this.logo = logo;
     }
-
+    public UserPojo(int cc_id , String name, String password, String address, String start, String end, int univ, String logo) {
+        this.cc_id = cc_id;
+        this.name = name;
+        this.password = password;
+        this.address = address;
+        this.start = start;
+        this.end = end;
+        this.univ = univ;
+        this.logo = logo;
+    }
     public String getName() {
         return name;
     }
@@ -99,4 +113,105 @@ public class UserPojo implements Serializable {
     public int getType() {
         return type;
     }
+
+    public String getUniversity() {
+        return university;
+    }
+
+    public ArrayList<FacultyPojo> getFaculties() {
+        return faculties;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setCc_id(int cc_id) {
+        this.cc_id = cc_id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setPasswd(String passwd) {
+        this.passwd = passwd;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
+    }
+
+    public void setUniv(int univ) {
+        this.univ = univ;
+    }
+
+    public void setUniversity(String university) {
+        this.university = university;
+    }
+
+    public void setFaculties(ArrayList<FacultyPojo> faculties) {
+        this.faculties = faculties;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
 }
+//
+// "data": {
+//         "employee": {
+//         "id": 2,
+//         "name": "center",
+//         "phone": "0123",
+//         "email": "a@a.c",
+//         "type": 1,
+//         "cc_id": 4,
+//         "accept": 1
+//         },
+//         "cc": {
+//         "id": 4,
+//         "name": "ayman center",
+//         "passwd": "123",
+//         "address": "alex",
+//         "logo": "1567823589072.4182files.jpg",
+//         "start": "08:32:39",
+//         "end": "03:32:50",
+//         "univ_id": 1,
+//         "delay_hours": 0,
+//         "delay_date": 0,
+//         "accepted": 1,
+//         "university": "alexandria",
+//         "faculties": [
+//         "1science",
+//         "2arts"
+//         ]
+//         }

@@ -6,17 +6,62 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.order.OrderFragment">
 
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/sum"-->
+        <!--android:text="sum"-->
+        <!--android:visibility="invisible"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:background="@drawable/custom_second_button"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_margin="5dp"/>-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/centernameId"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/black"
+        android:text="aa"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/refresh"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="15sp"
+        android:textColor="@color/black"
+        android:background="@drawable/progress_indicators_circular"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:id="@+id/view"
+        android:background="@color/textcolor2"
+        android:layout_below="@+id/refresh"
+        android:layout_marginBottom="15dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="5sp"
+        />
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary" />
+        android:background="@color/white"
+        app:tabIndicatorColor="@color/colorPrimary"
+        app:tabSelectedTextColor="@color/colorPrimary"
+        app:tabTextColor="@color/grey1"
+        android:layout_below="@+id/view"
+        />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/tabs"
+
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </RelativeLayout>

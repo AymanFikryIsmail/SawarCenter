@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgrond"
+    android:orientation="vertical"
+    tools:context=".ui.center_data.PersonalDataActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="25dp"
+            android:orientation="vertical">
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Personal Data  "
+                android:textSize="24sp"
+                android:layout_gravity="center"
+                />
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/nameedit"
+                android:hint="name"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp" />
+
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/emailedit"
+                android:hint="email"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp" />
+
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/phoneedit"
+                android:hint="phone"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/update"
+                android:text="update "
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:paddingStart="35dp"
+                android:paddingEnd="35dp"
+                android:layout_marginTop="35dp"
+                android:layout_gravity="center"
+                android:background="@drawable/custom_button"/>
+
+
+
+
+        </LinearLayout>
+    </ScrollView>
+    <FrameLayout
+        android:id="@+id/progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:alpha=".5"
+        android:animateLayoutChanges="true"
+        android:background="#B0E6CECE"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+
+        >
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress_drawable"
+            android:indeterminateDuration="500"
+            android:indeterminateTint="@color/colorPrimary"/>
+    </FrameLayout>
+</RelativeLayout>

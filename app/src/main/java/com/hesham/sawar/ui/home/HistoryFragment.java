@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hesham.sawar.R;
 import com.hesham.sawar.adapter.OrderHistoryAdapter;
@@ -20,6 +21,7 @@ import com.hesham.sawar.data.model.OrderPojo;
 import com.hesham.sawar.data.response.OrderInfoResponse;
 import com.hesham.sawar.data.response.OrderResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
+import com.hesham.sawar.networkmodule.NetworkUtilities;
 import com.hesham.sawar.utils.PrefManager;
 
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class HistoryFragment extends Fragment {
     private OrderHistoryAdapter facultySelectAdapter;
 
     PrefManager prefManager;
+    TextView emptyLayout;
 
     TextView totalorders , totalservice ,totalrate ,totalincome;
     @Override
@@ -50,6 +53,8 @@ public class HistoryFragment extends Fragment {
         View view= inflater.inflate(R.layout.fragment_history, container, false);
         facultyRecyclerView=view.findViewById(R.id.termRecyclerView);
         prefManager = new PrefManager(getContext());
+        emptyLayout=view.findViewById(R.id.emptyLayout);
+        hideEmpty();
 
         facultyPojos = new ArrayList<>();
         RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext() );
@@ -61,9 +66,13 @@ public class HistoryFragment extends Fragment {
         totalservice=view.findViewById(R.id.totalservice);
         totalrate=view.findViewById(R.id.totalrate);
         totalincome=view.findViewById(R.id.totalincome);
+        if (NetworkUtilities.isOnline(getContext())) {
+            getOrdersHistory();
+            getOrdersInfo();
+        } else {
+            Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
+        }
 
-        getOrdersHistory();
-        getOrdersInfo();
         return view;
     }
 
@@ -77,6 +86,11 @@ public class HistoryFragment extends Fragment {
                     Log.d("tag", "articles total result:: " + response.body().getMessage());
                     facultyPojos.clear();
                     facultyPojos.addAll(response.body().data);
+                    if (facultyPojos.size()==0){
+                        showEmpty();
+                    }else {
+                        hideEmpty();
+                    }
                     facultySelectAdapter = new OrderHistoryAdapter(getContext(), facultyPojos);
                     facultyRecyclerView.setAdapter(facultySelectAdapter);
                 }
@@ -85,7 +99,9 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onFailure(Call<OrderResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
 
+                showEmpty();
             }
         });
     }
@@ -98,10 +114,10 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onResponse(Call<OrderInfoResponse> call, Response<OrderInfoResponse> response) {
                 if (response.body().status && response.body().data != null&& response.body().data.size()!=0 ) {
-                    totalorders .setText("total orders "+response.body().data.get(0).getOrder_no());
-                    totalservice .setText("total service "+response.body().data.get(0).getTotal_service()+"");
-                    totalrate .setText("total rate "+response.body().data.get(0).getRate());
-                    totalincome .setText("total copy income "+response.body().data.get(0).getTotal_income()+"");
+                    totalorders .setText("Total no. of orders: "+response.body().data.get(0).getOrder_no());
+                    totalservice .setText("Total service:  "+response.body().data.get(0).getTotal_service()+" LE");
+                    totalrate .setText("Rating: "+response.body().data.get(0).getRate());
+                    totalincome .setText("Total copying income: "+response.body().data.get(0).getTotal_income()+" LE");
                 }
             }
 
@@ -111,5 +127,11 @@ public class HistoryFragment extends Fragment {
 
             }
         });
+    }
+    void showEmpty(){
+        emptyLayout.setVisibility(View.VISIBLE);
+    }
+    void hideEmpty(){
+        emptyLayout.setVisibility(View.GONE);
     }
 }

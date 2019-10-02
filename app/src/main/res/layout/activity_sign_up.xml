@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/screen_background"
+    android:background="@drawable/backgrond"
     android:orientation="vertical"
-    android:padding="25dp"
     tools:context=".ui.signup.SignUpActivity">
 
     <ScrollView
@@ -16,40 +15,70 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="25dp"
             android:orientation="vertical">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/backarrowId"
+                android:src="@drawable/backward_arrow_icon"
+                android:layout_centerVertical="true"
+                />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:text="sign up now"
                 android:textSize="30sp"
-             android:layout_gravity="center"
+                android:layout_centerInParent="true"
+                android:textStyle="bold|italic"
+                android:textColor="@color/black"
+
                 />
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:text="center's information  "
                 android:textSize="24sp"
+                android:textStyle="bold|italic"
+                android:textColor="@color/black"
+
                 />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/nameedit"
+                    android:hint="name"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/signup_shape_edit"
+                    android:padding="12dp" />
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_logo"
-
+                android:layout_weight="2"
+                android:id="@+id/addImage"
+                android:src="@drawable/ellipse_9"
                 android:layout_marginTop="15dp"/>
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/nameedit"
-                android:hint="name"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/signup_shape_edit"
-                android:padding="12dp" />
+
+            </LinearLayout>
 
 
             <EditText
@@ -62,47 +91,68 @@
                 android:background="@drawable/signup_shape_edit"
                 android:padding="12dp" />
 
-            <EditText
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Working Time"
+                android:layout_marginTop="10dp"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/fromedit"
-
+              android:layout_weight="1"
                 android:hint="from am"
                 android:inputType="number"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
                 android:background="@drawable/signup_shape_edit"
                 android:padding="12dp" />
-            <EditText
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/toedit"
+                android:layout_weight="1"
 
                 android:hint="to  pm"
                 android:inputType="number"
                 android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
                 android:background="@drawable/signup_shape_edit"
                 android:padding="12dp" />
-            <EditText
+            </LinearLayout>
+
+
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/emailedit"
-
-                android:hint="email"
-                android:layout_marginTop="10dp"
                 android:background="@drawable/signup_shape_edit"
-                android:padding="12dp" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/passwordedit"
-
-                android:hint="password"
-                android:inputType="textPassword"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/signup_shape_edit"
-                android:padding="12dp" />
-
+                >
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/passwordedit"
+                    android:inputType="textPassword"
+                    android:backgroundTint="@android:color/transparent"
+                    android:padding="12dp"
+                    android:hint="password"
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/eyeId"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:paddingEnd="10dp"
+                    android:src="@drawable/icon_visibility_outlined"/>
+            </RelativeLayout>
 
 
             <androidx.appcompat.widget.AppCompatSpinner
@@ -110,8 +160,10 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/universitySpinner"
                 android:layout_marginTop="10dp"
+                android:padding="22dp"
+                android:spinnerMode="dropdown"
                 android:background="@drawable/signup_shape_edit"
-                android:padding="22dp" />
+                />
 
 
 
@@ -130,4 +182,30 @@
                 android:textSize="20sp" />
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/progress_view"
+        android:alpha=".5"
+        android:animateLayoutChanges="true"
+        android:layout_centerInParent="true"
+        android:background="#B0E6CECE"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        >
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress_drawable"
+            android:indeterminateDuration="500"
+            android:indeterminateTint="@color/colorPrimary"/>
+    </FrameLayout>
+
+</RelativeLayout>
+

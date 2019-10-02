@@ -43,7 +43,7 @@ public class ChooseTypeActivity extends AppCompatActivity implements View.OnClic
             case R.id.gotoassistant:
 
                 prefManager.setType(0);
-                Intent intent = new Intent(this, SignUpActivity.class);
+                Intent intent = new Intent(this, SignUpOwnerActivity.class);
                 startActivity(intent);
                 break;
         }

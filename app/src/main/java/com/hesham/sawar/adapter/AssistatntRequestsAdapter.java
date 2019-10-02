@@ -1,6 +1,7 @@
 package com.hesham.sawar.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hesham.sawar.R;
@@ -89,7 +91,17 @@ public class AssistatntRequestsAdapter extends RecyclerView.Adapter<AssistatntRe
             refuseBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    rejectAssistants(facultyPojo);
+                    new AlertDialog.Builder(context,  R.style.AlertDialogCustom)
+                            .setMessage("Do you want to reject this assistant ?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    rejectAssistants(facultyPojo);
+                                }
+                            })
+                            // A null listener allows the button to dismiss the dialog and take no further action.
+                            .setNegativeButton(android.R.string.no, null)
+                            .show();
+
 
                 }
             });

@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/screen_background"
-    android:padding="25dp"
-
+    android:background="@drawable/backgrond"
+    android:padding="15dp"
     tools:context=".ui.signup.ChooseTypeActivity">
 
     <TextView
@@ -18,9 +17,8 @@
         android:textColor="@color/black"
         android:textSize="20sp"
         android:layout_gravity="center"
+        android:textStyle="bold|italic"
         />
-
-
 
     <TextView
         android:layout_width="wrap_content"
@@ -30,14 +28,12 @@
         android:textColor="@color/black"
         android:textSize="20sp"
         android:layout_gravity="center"
-
         />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_marginTop="25sp"
         android:orientation="horizontal">
 
     <Button
@@ -46,13 +42,12 @@
         android:layout_weight="1"
         android:id="@+id/gotoowner"
         android:text="Owner"
+        android:textAllCaps="false"
         android:textSize="20sp"
-        android:layout_margin="10dp"
         android:textColor="@color/white"
-        android:padding="25dp"
-        android:paddingEnd="35dp"
-        android:layout_marginTop="35dp"
-        android:layout_gravity="center"
+        android:paddingTop="21dp"
+        android:paddingBottom="21dp"
+        android:layout_marginEnd="14dp"
         android:background="@drawable/custom_button"/>
 
 
@@ -60,15 +55,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-
+        android:textAllCaps="false"
         android:id="@+id/gotoassistant"
-        android:layout_margin="10dp"
         android:text="Assistant"
         android:textSize="20sp"
         android:textColor="@color/white"
-        android:padding="25dp"
-        android:layout_marginTop="35dp"
-        android:layout_gravity="center"
+        android:paddingTop="21dp"
+        android:paddingBottom="21dp"
+        android:layout_marginStart="14dp"
+
         android:background="@drawable/custom_button"/>
 </LinearLayout>
 </LinearLayout>

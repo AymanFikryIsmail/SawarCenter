@@ -8,6 +8,9 @@
             android:id="@+id/centerdata"
             android:title="center's data" />
         <item
+            android:id="@+id/personaldata"
+            android:title="personal data" />
+        <item
             android:id="@+id/assistant"
             android:title="Assistants" />
         <item

@@ -1,5 +1,6 @@
 package com.hesham.sawar.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,18 +38,18 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
         facultyPojos = new ArrayList<>();
     }
 
-    public OrderReadyAdapter(Context context, List<OrderPojo> facultyPojos) {
+    public OrderReadyAdapter(Context context, List<OrderPojo> facultyPojos , EventListener listener) {
         this.context = context;
 //            prefManager=new PrefManager(context);
         this.facultyPojos = facultyPojos;
-
+   this.listener=listener;
     }
 
     @NonNull
     @Override
     public OrderReadyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_unready_order, parent, false);
+                .inflate(R.layout.row_readyorder, parent, false);
         return new OrderReadyAdapter.MyViewHolder(itemView);
     }
 
@@ -63,7 +65,7 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView ordername, date, price, time, canceledOrder;
+        public TextView ordername, date, price, time, canceledOrder , outDatedOrder;
         public Button deleteBtn;
 
         public MyViewHolder(View itemView) {
@@ -75,26 +77,37 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
             price = itemView.findViewById(R.id.orderprice);
             canceledOrder = itemView.findViewById(R.id.canceledOrder);
             deleteBtn = itemView.findViewById(R.id.deleteBtn);
+            outDatedOrder = itemView.findViewById(R.id.outDatedOrder);
 
         }
 
         public void bind(final OrderPojo orderPojo) {
-            ordername.setText("Order number        " + orderPojo.getId());
+            ordername.setText("Order number :                " +orderPojo.getNum() + "" + orderPojo.getDay() + orderPojo.getVar());
+//            ordername.setText("Order number        " + orderPojo.getId());
             date.setText("date: " + orderPojo.getDate());
-            time.setText("Time: " + orderPojo.getDate());
-            price.setText("price:" + orderPojo.getTotal_price());
+//            time.setText("Time: " + orderPojo.getDate());
+            price.setText("" + orderPojo.getTotal_price());
+//            Date date = new Date(orderPojo.getLongDate());
+//            SimpleDateFormat df2 = new SimpleDateFormat("hh:mm");
+//            String dateText = df2.format(date);
+//            time.setText("Time: " + dateText);
 
+            String pm=convertTime(orderPojo.getFormattedDate());
+            time.setText(pm);
             if (orderPojo.getCancel_s() == 1) {
                 canceledOrder.setVisibility(View.VISIBLE);
             } else {
                 canceledOrder.setVisibility(View.GONE);
             }
-
-            if (isBeforeNow(orderPojo.getLongDate())) {
-                canceledOrder.setVisibility(View.GONE);
-            } else {
+            if (orderPojo.getRecieve() == 1) {
                 canceledOrder.setVisibility(View.VISIBLE);
-                canceledOrder.setText("Time Out");
+                canceledOrder.setText("Received");
+            }
+            if (isBeforeNow(orderPojo.getLongDate())&&orderPojo.getCancel_s() == 0) {
+                outDatedOrder.setVisibility(View.GONE);
+            } else if (!isBeforeNow(orderPojo.getLongDate())) {
+                outDatedOrder.setVisibility(View.VISIBLE);
+                outDatedOrder.setText("Time Out");
             }
 
             if (orderPojo.getRecieve() == 1) {
@@ -111,13 +124,34 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
+    private String convertTime(String time) {
+        String processingTime = "";
+
+        try {
+            String _24HourTime = time;
+            SimpleDateFormat _24HourSDF = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+            SimpleDateFormat _12HourSDF = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
+            Date _24HourDt = _24HourSDF.parse(_24HourTime);
+            processingTime = _12HourSDF.format(_24HourDt);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm");
+        Date date = null;
+        try {
+            date = dateFormat.parse(time);
+        } catch (ParseException e) {
+        }
+        return processingTime;
+    }
     boolean isBeforeNow(long dt) {
 
         long after = dt + 86400000;
         long today = 0;
         try {
             Calendar c = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String output = sdf.format(c.getTime());
             Date date = sdf.parse(output);
 
@@ -140,6 +174,7 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
             public void onResponse(Call<Object> call, Response<Object> response) {
                 Log.d("tag", "articles total result:: " + response);
                 facultyPojos.remove(orderPojo);
+                listener.onEvent(facultyPojos);
                 OrderReadyAdapter.this.notifyDataSetChanged();
             }
 
@@ -152,7 +187,7 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
     }
 
     public interface EventListener {
-        void onEvent(Fragment data);
+        void onEvent(List<OrderPojo> orderPojos );
     }
 
     public void updateList(List<OrderPojo> newlist) {

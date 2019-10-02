@@ -7,6 +7,7 @@
         android:id="@+id/home_tab"
         android:enabled="true"
         android:title="home"
+        android:icon="@drawable/ai_home"
         app:showAsAction="withText|always"
         />
 
@@ -16,6 +17,7 @@
         android:id="@+id/orders_tab"
         android:enabled="true"
         android:title="orders"
+        android:icon="@drawable/copy_centers_icon"
         app:showAsAction="withText|always" />
 
 </menu>

@@ -1,54 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:background="@color/white"
     android:elevation="0dp"
-    app:contentPadding="25dp"
     app:cardCornerRadius="25dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    >
+
     <LinearLayout
-        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="26dp"
+        android:minWidth="150dp"
+        android:orientation="vertical"
 
         >
 
 
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/papername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="paper name"
+            android:backgroundTint="@color/colorPrimary"
             />
 
 
-
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/paperpages"
-            android:hint="paper pages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="number of pages"
+            android:inputType="number"
+            android:backgroundTint="@color/colorPrimary"
             />
 
 
         <EditText
+            android:id="@+id/paperprice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/paperprice"
-            android:hint="paper price"
+            android:hint=" price"
+            android:inputType="numberDecimal"
+            android:backgroundTint="@color/colorPrimary"
             />
 
 
-
-        <Button
+        <TextView
+            android:id="@+id/addsubject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/addsubject"
+            android:layout_gravity="center"
             android:layout_marginTop="25dp"
-            android:text="add subject"/>
+            android:gravity="center"
+            android:text="OK "
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

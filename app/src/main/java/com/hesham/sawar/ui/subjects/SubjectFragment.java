@@ -8,10 +8,13 @@ import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.hesham.sawar.R;
 import com.hesham.sawar.adapter.SubjectViewPager;
+import com.hesham.sawar.ui.home.HomeActivity;
 
 public class SubjectFragment extends Fragment {
 
@@ -20,6 +23,7 @@ public class SubjectFragment extends Fragment {
     TabLayout tabs;
 
     private int years;
+    private ImageView backarrowId;
 
     public SubjectFragment(int years) {
         this.years=years;
@@ -35,7 +39,16 @@ public class SubjectFragment extends Fragment {
         sectionsPagerAdapter = new SubjectViewPager(getContext(), getChildFragmentManager() , years);
         viewPager.setAdapter(sectionsPagerAdapter);
         tabs.setupWithViewPager(viewPager);
+        backarrowId=view.findViewById(R.id.backarrowId);
+        backarrowId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((HomeActivity)getActivity()).onBackPressed();
+            }
+        });
         return view;
     }
+
+
 
 }

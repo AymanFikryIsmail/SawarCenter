@@ -1,6 +1,7 @@
 package com.hesham.sawar.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hesham.sawar.R;
@@ -82,7 +84,26 @@ public class AssistatntAdapter extends RecyclerView.Adapter<AssistatntAdapter.My
                 deleteAssistant.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        deleteAssistants(facultyPojo);
+                        final AlertDialog alertdialog;
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogCustom);
+                        builder.setTitle("Delete confirmation");
+                        builder.setMessage("Are you sure to delete ");
+                        builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface _dialog, int which) {
+                                //do your work here
+                                deleteAssistants(facultyPojo);
+                            }
+                        });
+                        builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface _dialog, int which) {
+                                _dialog.dismiss();
+                            }
+                        });
+
+                        alertdialog = builder.create();
+                        alertdialog.show();
                     }
                 });
             }
@@ -101,6 +122,7 @@ public class AssistatntAdapter extends RecyclerView.Adapter<AssistatntAdapter.My
         call.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
+
                 facultyPojos.remove(userPojo);
                 notifyDataSetChanged();
             }

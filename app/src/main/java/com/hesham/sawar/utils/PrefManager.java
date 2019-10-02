@@ -43,7 +43,14 @@ public class PrefManager {
         editor.putInt("SubjectId", SubjectId);
         editor.commit();
     }
+    public int getUniversityId() {
+        return pref.getInt("niversityId", 0);
+    }
 
+    public void setUniversityId(int niversityId) {
+        editor.putInt("niversityId", niversityId);
+        editor.commit();
+    }
 
     public int getFacultyId() {
         return pref.getInt("FacultyId", 0);
@@ -70,7 +77,14 @@ public class PrefManager {
         editor.putString("Token", token);
         editor.commit();
     }
+    public String getImageProfile() {
+        return pref.getString("ImageProfile", "");
+    }
 
+    public void setImageProfile(String ImageProfile) {
+        editor.putString("ImageProfile", ImageProfile);
+        editor.commit();
+    }
 //    public String getPasswordToken() {
 //        return pref.getString("passwordToken", "");
 //    }
@@ -107,6 +121,14 @@ public class PrefManager {
         editor.putString("UserPojo", json);
         editor.commit();
     }
+
+
+    public void removeAll() {
+        editor.remove("UserPojo");
+        editor.remove("centerData");
+        editor.apply();
+    }
+
 
 //    public String getCreateAssociationPhoto() {
 //        return pref.getString("CreateAssociationPhoto", "");

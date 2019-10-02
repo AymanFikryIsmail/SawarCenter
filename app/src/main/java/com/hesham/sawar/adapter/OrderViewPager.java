@@ -17,11 +17,9 @@ public class OrderViewPager extends FragmentPagerAdapter {
     private static final String[] TAB_TITLES = new String[]{"UnReady Orders" ,"Ready Orders"};
     private final Context mContext;
 
-    private int years;
-    public OrderViewPager(Context context, FragmentManager fm, int years) {
+    public OrderViewPager(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
-        this.years=years;
 
     }
 

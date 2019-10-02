@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import com.hesham.sawar.R;
 import com.hesham.sawar.data.model.FacultyPojo;
 import com.hesham.sawar.data.model.SubjectPojo;
 import com.hesham.sawar.data.response.AssistantResponse;
+import com.hesham.sawar.data.response.CustomResponse;
 import com.hesham.sawar.data.response.SubjectResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
 import com.hesham.sawar.ui.subjects.FirstTermFragment;
@@ -54,20 +56,21 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
     PrefManager prefManager;
 
     //dialog
-    Dialog dialog ;
+    Dialog dialog;
 
     public SubjectHomeAdapter() {
         facultyPojos = new ArrayList<>();
     }
+
     int years, term;
 
-    public SubjectHomeAdapter(Context context, EventListener listener, List<SubjectPojo> facultyPojos , int years ,int term) {
+    public SubjectHomeAdapter(Context context, EventListener listener, List<SubjectPojo> facultyPojos, int years, int term) {
         this.context = context;
         prefManager = new PrefManager(context);
         this.facultyPojos = facultyPojos;
         this.listener = listener;
-        this.years=years;
-        this.term=term;
+        this.years = years;
+        this.term = term;
 
     }
 
@@ -91,7 +94,8 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView facultyname , popupMenuTxt;
+        public TextView facultyname;
+        public ImageView popupMenuTxt;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -109,7 +113,7 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
                 public void onClick(View view) {
 //                    Context wrapper = new ContextThemeWrapper(context, R.style.PopupMenu);
 
-                    PopupMenu popupMenu =new PopupMenu(context,popupMenuTxt);
+                    PopupMenu popupMenu = new PopupMenu(context, popupMenuTxt);
                     popupMenu.inflate(R.menu.popup_menu);
 
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -119,12 +123,12 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
                                 case R.id.edit:
 
                                     dialog = new Dialog(context); // making dialog full screen
-                                    LayoutInflater layoutinflater  = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-                                    View Dview = layoutinflater.inflate(R.layout.dialog_add_subject,null);
+                                    LayoutInflater layoutinflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                    View Dview = layoutinflater.inflate(R.layout.dialog_add_subject, null);
                                     dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                     dialog.setContentView(Dview);
-                                    Button dialogButton = dialog.findViewById(R.id.addsubject);
+                                    TextView dialogButton = dialog.findViewById(R.id.addsubject);
                                     final EditText subname = dialog.findViewById(R.id.subjectname);
 
                                     dialogButton.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +147,7 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
                                     break;
                                 case R.id.delete:
                                     final AlertDialog alertdialog;
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogCustom);
                                     builder.setTitle("Delete confirmation");
                                     builder.setMessage("Are you sure to delete ");
                                     builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -151,7 +155,7 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
                                         public void onClick(DialogInterface _dialog, int which) {
                                             //do your work here
                                             facultyPojo.setSub_id(facultyPojo.getId());
-                                            deleteSubject(facultyPojo,_dialog);
+                                            deleteSubject(facultyPojo, _dialog);
                                         }
                                     });
                                     builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
@@ -189,44 +193,55 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
 
     public interface EventListener {
         void onEvent(Fragment data);
+
+        void onCheckForEmpty();
+
     }
 
     public void updateList(List<SubjectPojo> newlist) {
         facultyPojos = newlist;
         this.notifyDataSetChanged();
     }
+
     public void renameSubjects(SubjectPojo subjectPojo) {//prefManager.getCenterId()
-        Call<Object> call = Apiservice.getInstance().apiRequest.
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
                 renameSubjects(subjectPojo);
-        call.enqueue(new Callback<Object>() {
+        call.enqueue(new Callback<CustomResponse>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-              getSubjects();
-              dialog.dismiss();
+            public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
+                if (response.body().status && response.body().data != null) {
+
+                    getSubjects();
+                    dialog.dismiss();
+                }
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<CustomResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 dialog.dismiss();
 
             }
         });
     }
-    public void deleteSubject(final SubjectPojo subjectPojo,final DialogInterface _dialog) {//prefManager.getCenterId()
-        Call<Object> call = Apiservice.getInstance().apiRequest.
+
+    public void deleteSubject(final SubjectPojo subjectPojo, final DialogInterface _dialog) {//prefManager.getCenterId()
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
                 removeSubjects(subjectPojo);
-        call.enqueue(new Callback<Object>() {
+        call.enqueue(new Callback<CustomResponse>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                facultyPojos.remove(subjectPojo);
-                SubjectHomeAdapter.this.notifyDataSetChanged();
-                _dialog.dismiss();
+            public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
+                if (response.body().status && response.body().data != null) {
+                    facultyPojos.remove(subjectPojo);
+                    SubjectHomeAdapter.this.notifyDataSetChanged();
+                    _dialog.dismiss();
+                    listener.onCheckForEmpty();
+                }
 
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<CustomResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 _dialog.dismiss();
 

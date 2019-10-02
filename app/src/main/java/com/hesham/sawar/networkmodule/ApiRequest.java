@@ -6,23 +6,31 @@ import com.hesham.sawar.data.model.PaperPojo;
 import com.hesham.sawar.data.model.SubjectPojo;
 import com.hesham.sawar.data.model.UserPojo;
 import com.hesham.sawar.data.response.AssistantResponse;
+import com.hesham.sawar.data.response.CenterResponse;
+import com.hesham.sawar.data.response.CustomResponse;
 import com.hesham.sawar.data.response.DetailsResponse;
 import com.hesham.sawar.data.response.FacultyResponse;
+import com.hesham.sawar.data.response.ImageResponse;
 import com.hesham.sawar.data.response.LoginResponse;
 import com.hesham.sawar.data.response.OrderInfoResponse;
 import com.hesham.sawar.data.response.OrderResponse;
 import com.hesham.sawar.data.response.PaperResponse;
+import com.hesham.sawar.data.response.SignUpResponse;
 import com.hesham.sawar.data.response.SubjectResponse;
 import com.hesham.sawar.data.response.UserResponse;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 /**
@@ -35,18 +43,35 @@ public interface ApiRequest {
     Call<LoginResponse> SignIn(@Body UserPojo body);
 
     @POST("employee/signup")
-    Call<Object> signup(@Body UserPojo body);
+    Call<CustomResponse> signup(@Body UserPojo body);
+
+    @FormUrlEncoded
+    @POST("employee/update")
+    Call<SignUpResponse> updateProfile(
+            @Field("assistant_id") int  assistant_id ,
+            @Field("name") String  name ,
+            @Field("phone") String  phone ,
+            @Field("email") String  email
+            );
+
+
+    @POST("cc/update")
+    Call<CustomResponse> updateCC(@Body UserPojo body);
+
     @POST("cc/add")
     Call<UserResponse> addCenter(@Body UserPojo body);
-
+    @Multipart
+    @POST("image/")
+    Call<ImageResponse> uploadProfileImages(@Part("file\";filename=\"files.jpg\" ") RequestBody file);
+//@Part MultipartBody.Part file );
     @POST("cc/all")
-    Call<UserResponse> getAllCenter();
+    Call<CenterResponse> getAllCenter();
 
     @GET("faculty/all")
     Call<FacultyResponse> getFaculties();
 
     @POST("faculty/addtocc")
-    Call<Object> addFacultiesToCenter(@Body FacultyPojo body);
+    Call<CustomResponse> addFacultiesToCenter(@Body FacultyPojo body);
 
     @POST("faculty/subjects/all")
     Call<SubjectResponse> getAllSubjects(@Body SubjectPojo body);
@@ -56,22 +81,22 @@ public interface ApiRequest {
 
 
     @POST("faculty/subjects/add")
-    Call<Object> addSubjects(@Body SubjectPojo body);
+    Call<CustomResponse> addSubjects(@Body SubjectPojo body);
 
     @POST("faculty/subjects/rename")
-    Call<Object>renameSubjects(@Body SubjectPojo body);
+    Call<CustomResponse>renameSubjects(@Body SubjectPojo body);
     @POST("faculty/subjects/remove")
-    Call<Object> removeSubjects(@Body SubjectPojo body);
+    Call<CustomResponse> removeSubjects(@Body SubjectPojo body);
 
 
 
     @POST("faculty/paper/add")
-    Call<Object> addPaper(@Body PaperPojo body);
+    Call<CustomResponse> addPaper(@Body PaperPojo body);
 
     @POST("faculty/paper/rename")
-    Call<Object> renamePaper(@Body PaperPojo body);
+    Call<CustomResponse> renamePaper(@Body PaperPojo body);
     @POST("faculty/paper/remove")
-    Call<Object> removePaper(@Body PaperPojo body);
+    Call<CustomResponse> removePaper(@Body PaperPojo body);
 
 
     @FormUrlEncoded
@@ -98,10 +123,12 @@ public interface ApiRequest {
     @GET("univ/all")
     Call<FacultyResponse> getUniversities();
 
-    @GET("cc/home")
-    Call<FacultyResponse> getHomeFaculties(@Query("cc_id") int cc_id);
+    @FormUrlEncoded
+    @POST("cc/home")
+    Call<FacultyResponse> getHomeFaculties(@Field("cc_id") int cc_id);
 
-
+    @GET("cc/problem")
+    Call<Object> postProblem(@Query("hours") int hours ,@Query("cc_id") int cc_id  );
 
 
 

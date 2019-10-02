@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hesham.sawar.R;
 import com.hesham.sawar.adapter.AssistatntAdapter;
@@ -24,6 +26,7 @@ import com.hesham.sawar.data.response.AssistantResponse;
 import com.hesham.sawar.data.response.SubjectResponse;
 import com.hesham.sawar.data.response.UserResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
+import com.hesham.sawar.networkmodule.NetworkUtilities;
 import com.hesham.sawar.utils.PrefManager;
 
 import java.util.ArrayList;
@@ -46,6 +49,7 @@ public class AssistantsRequestsFragment extends Fragment {
 
         return fragment;
     }
+    TextView emptyLayout;
 
     private List<UserPojo> facultyPojos;
 
@@ -68,12 +72,17 @@ public class AssistantsRequestsFragment extends Fragment {
         facultyRecyclerView=view.findViewById(R.id.termRecyclerView);
         facultyPojos = new ArrayList<>();
 
-
+        emptyLayout=view.findViewById(R.id.emptyLayout);
+        hideEmpty();
         RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext() );
         facultyRecyclerView.setLayoutManager(gridLayoutManager);
         facultySelectAdapter = new AssistatntRequestsAdapter(getContext(),facultyPojos);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
-        getAllAssistantsRequests();
+        if (NetworkUtilities.isOnline(getContext())) {
+            getAllAssistantsRequests();
+        } else {
+            Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
+        }
         return view;
     }
 
@@ -101,6 +110,11 @@ public class AssistantsRequestsFragment extends Fragment {
                     Log.d("tag", "articles total result:: " + response.body().getMessage());
                     facultyPojos.clear();
                     facultyPojos.addAll(response.body().cc_id);
+                    if (facultyPojos.size()==0){
+                        showEmpty();
+                    }else {
+                        hideEmpty();
+                    }
                     facultySelectAdapter = new AssistatntRequestsAdapter(getContext(),facultyPojos);
                     facultyRecyclerView.setAdapter(facultySelectAdapter);
                 }
@@ -109,9 +123,20 @@ public class AssistantsRequestsFragment extends Fragment {
             @Override
             public void onFailure(Call<AssistantResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+
+                showEmpty();
 
             }
         });
+    }
+
+
+    void showEmpty(){
+        emptyLayout.setVisibility(View.VISIBLE);
+    }
+    void hideEmpty(){
+        emptyLayout.setVisibility(View.GONE);
     }
 
 }

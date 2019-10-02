@@ -5,14 +5,14 @@
     android:layout_gravity="center"
     android:background="@color/white"
     android:elevation="0dp"
-    app:contentPadding="25dp"
     app:cardCornerRadius="25dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 <LinearLayout
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="26dp"
+    android:layout_margin="16dp"
 
     >
 
@@ -21,16 +21,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/subjectname"
-        android:hint="subject name"
+        android:hint="Enter name"
+        android:textAllCaps="false"
+        android:minWidth="250dp"
+        android:backgroundTint="@color/colorPrimary"
+
         />
 
 
-    <Button
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/addsubject"
         android:layout_marginTop="25dp"
-        android:text="add subject"/>
+        android:text="OK"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="@color/colorPrimary"
+        />
 </LinearLayout>
 
 </androidx.cardview.widget.CardView>
