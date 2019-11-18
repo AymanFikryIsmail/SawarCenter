@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ public class AssistantsRequestsFragment extends Fragment {
 
     private RecyclerView facultyRecyclerView;
     private AssistatntRequestsAdapter facultySelectAdapter;
+    private FrameLayout progress_view;
 
     PrefManager prefManager;
     @Override
@@ -71,6 +73,7 @@ public class AssistantsRequestsFragment extends Fragment {
         prefManager=new PrefManager(getContext());
         facultyRecyclerView=view.findViewById(R.id.termRecyclerView);
         facultyPojos = new ArrayList<>();
+        progress_view = view.findViewById(R.id.progress_view);
 
         emptyLayout=view.findViewById(R.id.emptyLayout);
         hideEmpty();
@@ -79,7 +82,12 @@ public class AssistantsRequestsFragment extends Fragment {
         facultySelectAdapter = new AssistatntRequestsAdapter(getContext(),facultyPojos);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
         if (NetworkUtilities.isOnline(getContext())) {
-            getAllAssistantsRequests();
+            if (NetworkUtilities.isFast(getContext())) {
+                getAllAssistantsRequests();
+            }else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
+
         } else {
             Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
@@ -103,21 +111,26 @@ public class AssistantsRequestsFragment extends Fragment {
     public void getAllAssistantsRequests() {//prefManager.getCenterId()
         Call<AssistantResponse> call = Apiservice.getInstance().apiRequest.
                 getAllAssistantsRequests(prefManager.getCenterId());
+        progress_view.setVisibility(View.VISIBLE);
         call.enqueue(new Callback<AssistantResponse>() {
             @Override
             public void onResponse(Call<AssistantResponse> call, Response<AssistantResponse> response) {
-                if (response.body().status  && response.body().cc_id != null) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    facultyPojos.clear();
-                    facultyPojos.addAll(response.body().cc_id);
-                    if (facultyPojos.size()==0){
-                        showEmpty();
-                    }else {
-                        hideEmpty();
+                if (response.body() != null) {
+
+                    if (response.body().status && response.body().cc_id != null) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.clear();
+                        facultyPojos.addAll(response.body().cc_id);
+                        if (facultyPojos.size() == 0) {
+                            showEmpty();
+                        } else {
+                            hideEmpty();
+                        }
+                        facultySelectAdapter = new AssistatntRequestsAdapter(getContext(), facultyPojos);
+                        facultyRecyclerView.setAdapter(facultySelectAdapter);
                     }
-                    facultySelectAdapter = new AssistatntRequestsAdapter(getContext(),facultyPojos);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
                 }
+                progress_view.setVisibility(View.GONE);
             }
 
             @Override
@@ -126,7 +139,7 @@ public class AssistantsRequestsFragment extends Fragment {
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
 
                 showEmpty();
-
+                progress_view.setVisibility(View.GONE);
             }
         });
     }

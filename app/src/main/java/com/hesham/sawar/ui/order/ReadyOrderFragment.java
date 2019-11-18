@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ public class ReadyOrderFragment extends Fragment  implements OrderReadyAdapter.E
     private OrderReadyAdapter facultySelectAdapter;
     PrefManager prefManager;
     TextView emptyLayout;
+    private FrameLayout progress_view;
 
     public ReadyOrderFragment() {
         // Required empty public constructor
@@ -58,6 +60,8 @@ public class ReadyOrderFragment extends Fragment  implements OrderReadyAdapter.E
         prefManager = new PrefManager(getContext());
         emptyLayout=view.findViewById(R.id.emptyLayout);
         hideEmpty();
+        progress_view = view.findViewById(R.id.progress_view);
+
         facultyPojos = new ArrayList<>();
         RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext() );
         facultyRecyclerView.setLayoutManager(gridLayoutManager);
@@ -86,36 +90,44 @@ public class ReadyOrderFragment extends Fragment  implements OrderReadyAdapter.E
     public void getOrders() {//prefManager.getCenterId()
         Call<OrderResponse> call = Apiservice.getInstance().apiRequest.
                 getReadyOrders(prefManager.getCenterId());
-        if (NetworkUtilities.isOnline(getContext())) {
 
+        if (NetworkUtilities.isOnline(getContext())) {
+            if (NetworkUtilities.isFast(getContext())) {
+
+            progress_view.setVisibility(View.VISIBLE);
             call.enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
-                if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    facultyPojos.clear();
-                    facultyPojos.addAll(response.body().data);
-                    if (facultyPojos.size()==0){
-                        showEmpty();
-                    }else {
-                        hideEmpty();
-                    }
-                    facultySelectAdapter = new OrderReadyAdapter(getContext(), facultyPojos, ReadyOrderFragment.this);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
-                }else {
-                    showEmpty();
-                }
-            }
+                if (response.body() != null) {
 
+                    if (response.body() != null && response.body().status && response.body().data != null && response.body().data.size() != 0) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.clear();
+                        facultyPojos.addAll(response.body().data);
+                        if (facultyPojos.size() == 0) {
+                            showEmpty();
+                        } else {
+                            hideEmpty();
+                        }
+                        facultySelectAdapter = new OrderReadyAdapter(getContext(), facultyPojos, ReadyOrderFragment.this);
+                        facultyRecyclerView.setAdapter(facultySelectAdapter);
+                    } else {
+                        showEmpty();
+                    }
+                }
+                progress_view.setVisibility(View.GONE);
+            }
             @Override
             public void onFailure(Call<OrderResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 showEmpty();
-
+                progress_view.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
             }
         });
-        } else {
+            }else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }} else {
             Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
     }

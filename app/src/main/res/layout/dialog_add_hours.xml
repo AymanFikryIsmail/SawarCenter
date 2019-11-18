@@ -19,7 +19,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="we are sorry center has a problem  that will be fixed in "/>
+        android:text="We are sorry for the inconvenience. There's a problem with the center's printers. We're working to fix it within  "/>
 
     <EditText
         android:layout_width="match_parent"

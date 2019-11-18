@@ -7,7 +7,9 @@ import com.hesham.sawar.data.model.SubjectPojo;
 import com.hesham.sawar.data.model.UserPojo;
 import com.hesham.sawar.data.response.AssistantResponse;
 import com.hesham.sawar.data.response.CenterResponse;
+import com.hesham.sawar.data.response.CheckEmployeeResponse;
 import com.hesham.sawar.data.response.CustomResponse;
+import com.hesham.sawar.data.response.DepartmentResponse;
 import com.hesham.sawar.data.response.DetailsResponse;
 import com.hesham.sawar.data.response.FacultyResponse;
 import com.hesham.sawar.data.response.ImageResponse;
@@ -42,6 +44,12 @@ public interface ApiRequest {
     @POST("employee/login")
     Call<LoginResponse> SignIn(@Body UserPojo body);
 
+    @FormUrlEncoded
+    @POST("employee/login/check")
+    Call<CheckEmployeeResponse> checkForEmployee(
+                @Field("id") int  id
+    );
+
     @POST("employee/signup")
     Call<CustomResponse> signup(@Body UserPojo body);
 
@@ -73,8 +81,12 @@ public interface ApiRequest {
     @POST("faculty/addtocc")
     Call<CustomResponse> addFacultiesToCenter(@Body FacultyPojo body);
 
-    @POST("faculty/subjects/all")
+    @POST("faculty/subjects/filter")
     Call<SubjectResponse> getAllSubjects(@Body SubjectPojo body);
+
+    @FormUrlEncoded
+    @POST("faculty/departments")
+    Call<DepartmentResponse> getAllDepartments(@Field("f_id") int f_id);
 
     @GET("faculty/paper/get")
     Call<PaperResponse> getPapers(@Query("type") String type , @Query("sub_id") int subId);
@@ -104,7 +116,7 @@ public interface ApiRequest {
     Call<AssistantResponse> getAllAssistants(@Field("cc_id") int body);
     @FormUrlEncoded
     @POST("employee/assistant/delete")
-    Call<Object> deleteAssistants(@Field("assistant_id") int body);
+    Call<CustomResponse> deleteAssistants(@Field("assistant_id") int body);
 
     @FormUrlEncoded
     @POST("employee/requests")
@@ -112,11 +124,11 @@ public interface ApiRequest {
 
     @FormUrlEncoded
     @POST("employee/accept")
-    Call<Object> acceptAssistants(@Field("assistant_id") int body);
+    Call<CustomResponse> acceptAssistants(@Field("assistant_id") int body);
 
     @FormUrlEncoded
     @POST("employee/reject")
-    Call<Object> rejectAssistants(@Field("assistant_id") int body);
+    Call<CustomResponse> rejectAssistants(@Field("assistant_id") int body);
 
 
 
@@ -128,7 +140,7 @@ public interface ApiRequest {
     Call<FacultyResponse> getHomeFaculties(@Field("cc_id") int cc_id);
 
     @GET("cc/problem")
-    Call<Object> postProblem(@Query("hours") int hours ,@Query("cc_id") int cc_id  );
+    Call<CustomResponse> postProblem(@Query("hours") int hours ,@Query("cc_id") int cc_id  );
 
 
 
@@ -140,11 +152,11 @@ public interface ApiRequest {
     Call<OrderResponse> getReadyOrders(@Query("cc_id") int centerid);
 
     @GET("order/makeready")
-    Call<Object> makeReadyOrder(@Query("order_id") int order_id);
+    Call<CustomResponse> makeReadyOrder(@Query("order_id") int order_id);
 
 
     @GET("order/cancelcc")
-    Call<Object> removeReadyOrder(@Query("order_id") int order_id);
+    Call<CustomResponse> removeReadyOrder(@Query("order_id") int order_id);
 
 
     @GET("order/history")

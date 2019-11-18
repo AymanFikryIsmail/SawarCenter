@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.hesham.sawar.R;
+import com.hesham.sawar.data.response.CheckEmployeeResponse;
 import com.hesham.sawar.data.response.FacultyResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
 import com.hesham.sawar.ui.assistant.AssistantsActivity;
@@ -31,7 +33,11 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                openActivity();
+                if ( prefManager.getToken().equals("") ) {
+                    openActivity();
+                }else {
+                    checkForEmployee();
+                }
             }
         }, 1800);
  prefManager=new PrefManager(this);
@@ -50,5 +56,35 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(i);
             finish();
         }
+    }
+
+
+
+
+    public void checkForEmployee() {//prefManager.getCenterId()
+        Call<CheckEmployeeResponse> call = Apiservice.getInstance().apiRequest.
+                checkForEmployee(prefManager.getUserPojo().getId());
+        call.enqueue(new Callback<CheckEmployeeResponse>() {
+            @Override
+            public void onResponse(Call<CheckEmployeeResponse> call, Response<CheckEmployeeResponse> response) {
+                if (response.body() !=null &&response.body().status ) {//response.body().status  &&
+
+                    if (response.body().data){
+                        openActivity();
+                    }else {
+                        Toast.makeText(SplashActivity.this, "You are not allowed to continue", Toast.LENGTH_LONG).show();
+                            Intent i = new Intent(SplashActivity.this, LoginActivity.class);
+                            startActivity(i);
+                            finish();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CheckEmployeeResponse> call, Throwable t) {
+                Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(SplashActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

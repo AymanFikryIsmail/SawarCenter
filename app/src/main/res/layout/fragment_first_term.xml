@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.subjects.FirstTermFragment">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/departmentSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/termRecyclerView"
@@ -13,15 +25,17 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp" />
+    </LinearLayout>
+
     <TextView
+        android:id="@+id/emptyLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/emptyLayout"
-        android:text="Nothing to show"
         android:layout_gravity="center"
-android:visibility="gone"
         android:gravity="center"
-        />
+        android:text="Nothing to show"
+        android:visibility="gone" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -29,5 +43,28 @@ android:visibility="gone"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/colorPrimary"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@drawable/icon_add_filled" />
+
+    <FrameLayout
+        android:id="@+id/progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:alpha=".5"
+        android:animateLayoutChanges="true"
+        android:background="#8B94C4"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress_drawable"
+            android:indeterminateDuration="500"
+            android:indeterminateTint="@color/colorPrimary" />
+    </FrameLayout>
 </FrameLayout>

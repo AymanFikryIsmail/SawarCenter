@@ -162,25 +162,29 @@ public class SignUpActivity extends AppCompatActivity implements OnRequestImageI
         Call<FacultyResponse> call = Apiservice.getInstance().apiRequest.
                 getUniversities();
         if (NetworkUtilities.isOnline(this)) {
+            if (NetworkUtilities.isFast(this)) {
+
             call.enqueue(new Callback<FacultyResponse>() {
                 @Override
                 public void onResponse(Call<FacultyResponse> call, Response<FacultyResponse> response) {
-                    if (response.body().status && response.body().cc_id != null && response.body().cc_id.size() != 0) {
-                        Log.d("tag", "articles total result:: " + response.body().getMessage());
-                        universityPojos.addAll(response.body().cc_id);
+                    if (response.body() != null) {
+                        if (response.body().status && response.body().cc_id != null && response.body().cc_id.size() != 0) {
+                            Log.d("tag", "articles total result:: " + response.body().getMessage());
+                            universityPojos.addAll(response.body().cc_id);
 
-                        for (int i = 1; i <= universityPojos.size(); i++) {
-                            list.add(universityPojos.get(i - 1).getName());
-                        }
+                            for (int i = 1; i <= universityPojos.size(); i++) {
+                                list.add(universityPojos.get(i - 1).getName());
+                            }
 //                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(SignUpActivity.this,
 //                                android.R.layout.simple_spinner_item, list);
 //                        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        customSpinnerAdapter = new CustomSpinnerAdapter(SignUpActivity.this, list, "University Served");
-                        universitySpinner.setAdapter(customSpinnerAdapter);
-                        universitySpinner.setSelection(0, false);
-                        universitySpinner.setAdapter(customSpinnerAdapter);
-                    } else {
-                        Toast.makeText(SignUpActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                            customSpinnerAdapter = new CustomSpinnerAdapter(SignUpActivity.this, list, "University Served");
+                            universitySpinner.setAdapter(customSpinnerAdapter);
+                            universitySpinner.setSelection(0, false);
+                            universitySpinner.setAdapter(customSpinnerAdapter);
+                        } else {
+                            Toast.makeText(SignUpActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                        }
                     }
 
                 }
@@ -191,6 +195,9 @@ public class SignUpActivity extends AppCompatActivity implements OnRequestImageI
                     Toast.makeText(SignUpActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
                 }
             });
+            }else {
+                Toast.makeText(this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(SignUpActivity.this, "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
@@ -215,7 +222,8 @@ public class SignUpActivity extends AppCompatActivity implements OnRequestImageI
 //                        "OnItemSelectedListener : " + adapterView.getItemAtPosition(i).toString(),
 //                        Toast.LENGTH_SHORT).show();
                 universityId = i;
-            }
+
+                         }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -317,18 +325,20 @@ public class SignUpActivity extends AppCompatActivity implements OnRequestImageI
                 call.enqueue(new Callback<UserResponse>() {
                     @Override
                     public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                        if (response.body().status && response.body().cc_id != 0) {
-                            Log.d("tag", "articles total result:: " + response.body().getMessage());
-                            prefManager.setCenterId(response.body().cc_id);
-                            prefManager.setCenterData(userPojo);
-                            prefManager.setUniversityId( universityPojos.get(universityId - 1).getId());
-                            progress_view.setVisibility(View.GONE);
+                        if (response.body() != null) {
 
-                            Intent i = new Intent(SignUpActivity.this, SignUpWithFacultyActivity.class);
-                            startActivity(i);
+                            if (response.body().status && response.body().cc_id != 0) {
+                                Log.d("tag", "articles total result:: " + response.body().getMessage());
+                                prefManager.setCenterId(response.body().cc_id);
+                                prefManager.setCenterData(userPojo);
+                                prefManager.setUniversityId(universityPojos.get(universityId - 1).getId());
+
+                                Intent i = new Intent(SignUpActivity.this, SignUpWithFacultyActivity.class);
+                                startActivity(i);
+                            }
                         }
+                        progress_view.setVisibility(View.GONE);
                     }
-
                     @Override
                     public void onFailure(Call<UserResponse> call, Throwable t) {
                         Log.d("tag", "articles total result:: " + t.getMessage());
@@ -351,6 +361,8 @@ public class SignUpActivity extends AppCompatActivity implements OnRequestImageI
         Call<ImageResponse> call = Apiservice.getInstance().apiRequest.
                 uploadProfileImages(imageFileRb);
         if (NetworkUtilities.isOnline(this)) {
+            if (NetworkUtilities.isFast(this)) {
+
             call.enqueue(new Callback<ImageResponse>() {
                 @Override
                 public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
@@ -377,7 +389,9 @@ public class SignUpActivity extends AppCompatActivity implements OnRequestImageI
                     Toast.makeText(SignUpActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
                 }
             });
-        } else {
+            }else {
+                Toast.makeText(this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }  } else {
             Toast.makeText(SignUpActivity.this, "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
     }

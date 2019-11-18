@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +43,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PaperFragment extends Fragment implements View.OnClickListener , PaperHomeAdapter.EventListener {
+public class PaperFragment extends Fragment implements View.OnClickListener, PaperHomeAdapter.EventListener {
     public static PaperFragment newInstance() {
         PaperFragment fragment = new PaperFragment();
         Bundle args = new Bundle();
@@ -52,12 +53,13 @@ public class PaperFragment extends Fragment implements View.OnClickListener , Pa
 
     private List<PaperPojo> facultyPojos;
     TextView emptyLayout;
+    private FrameLayout progress_view;
 
     private RecyclerView facultyRecyclerView;
     private PaperHomeAdapter facultySelectAdapter;
     PrefManager prefManager;
     private String paperType;
-    private ImageView  backarrowId;
+    private ImageView backarrowId;
 
     TextView lectureId, handoutId, sectionId, courseId, revisionId;
     View lectureViewId, handoutViewId, sectionViewId, courseViewId, revisionViewId;
@@ -85,7 +87,9 @@ public class PaperFragment extends Fragment implements View.OnClickListener , Pa
                 showDialog();
             }
         });
-        emptyLayout=view.findViewById(R.id.emptyLayout);
+        emptyLayout = view.findViewById(R.id.emptyLayout);
+        progress_view = view.findViewById(R.id.progress_view);
+
         hideEmpty();
         initView(view);
         RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext());
@@ -93,17 +97,21 @@ public class PaperFragment extends Fragment implements View.OnClickListener , Pa
         facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperType, PaperFragment.this);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
         if (NetworkUtilities.isOnline(getContext())) {
-            getPapers();
+            if (NetworkUtilities.isFast(getContext())) {
+                getPapers();
+            } else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
 
 
-        backarrowId=view.findViewById(R.id.backarrowId);
+        backarrowId = view.findViewById(R.id.backarrowId);
         backarrowId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((HomeActivity)getActivity()).onBackPressed();
+                ((HomeActivity) getActivity()).onBackPressed();
             }
         });
         return view;
@@ -224,36 +232,48 @@ public class PaperFragment extends Fragment implements View.OnClickListener , Pa
         Call<PaperResponse> call = Apiservice.getInstance().apiRequest.
                 getPapers(paperType, prefManager.getSubjectId());
         if (NetworkUtilities.isOnline(getContext())) {
-        call.enqueue(new Callback<PaperResponse>() {
-            @Override
-            public void onResponse(Call<PaperResponse> call, Response<PaperResponse> response) {
-                if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    facultyPojos.clear();
-                    facultyPojos.addAll(response.body().data);
-                    if (facultyPojos.size()==0){
-                        showEmpty();
-                    }else {
-                        hideEmpty();
+            if (NetworkUtilities.isFast(getContext())) {
+
+                progress_view.setVisibility(View.VISIBLE);
+
+                call.enqueue(new Callback<PaperResponse>() {
+                    @Override
+                    public void onResponse(Call<PaperResponse> call, Response<PaperResponse> response) {
+                        if (response.body() != null) {
+                            if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
+                                Log.d("tag", "articles total result:: " + response.body().getMessage());
+                                facultyPojos.clear();
+                                facultyPojos.addAll(response.body().data);
+                                if (facultyPojos.size() == 0) {
+                                    showEmpty();
+                                } else {
+                                    hideEmpty();
+                                }
+                                facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperType, PaperFragment.this);
+                                facultyRecyclerView.setAdapter(facultySelectAdapter);
+                            } else {
+                                facultyPojos.clear();
+                                facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperType, PaperFragment.this);
+                                facultyRecyclerView.setAdapter(facultySelectAdapter);
+                                showEmpty();
+                            }
+                        }
+                        progress_view.setVisibility(View.GONE);
+
                     }
-                    facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperType,PaperFragment.this);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
-                } else {
-                    facultyPojos.clear();
-                    facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperType,PaperFragment.this);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
-                    showEmpty();
 
-                }
-            }
+                    @Override
+                    public void onFailure(Call<PaperResponse> call, Throwable t) {
+                        Log.d("tag", "articles total result:: " + t.getMessage());
+                        showEmpty();
+                        progress_view.setVisibility(View.GONE);
 
-            @Override
-            public void onFailure(Call<PaperResponse> call, Throwable t) {
-                Log.d("tag", "articles total result:: " + t.getMessage());
-                showEmpty();
-                Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                    }
+                });
+            } else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
             }
-        });
         } else {
             Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
@@ -284,8 +304,13 @@ public class PaperFragment extends Fragment implements View.OnClickListener , Pa
                     double price = Double.parseDouble(paperprice.getText().toString());
                     int pages = Integer.parseInt(paperpages.getText().toString());
                     if (NetworkUtilities.isOnline(getContext())) {
-                        addSubjects(subname.getText().toString(), pages, price);
-                        dialog.dismiss();
+                        if (NetworkUtilities.isFast(getContext())) {
+
+                            addSubjects(subname.getText().toString(), pages, price);
+                            dialog.dismiss();
+                        } else {
+                            Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+                        }
                     } else {
                         Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
                     }
@@ -321,17 +346,19 @@ public class PaperFragment extends Fragment implements View.OnClickListener , Pa
         });
     }
 
-    public  void checkForEmpty(){
-        if (facultyPojos.size()==0){
+    public void checkForEmpty() {
+        if (facultyPojos.size() == 0) {
             showEmpty();
-        }else {
+        } else {
             hideEmpty();
         }
     }
-    void showEmpty(){
+
+    void showEmpty() {
         emptyLayout.setVisibility(View.VISIBLE);
     }
-    void hideEmpty(){
+
+    void hideEmpty() {
         emptyLayout.setVisibility(View.GONE);
     }
 

@@ -16,54 +16,53 @@
         android:roundIcon="@drawable/logo_test_3"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
-        >
-        <activity android:name=".ui.center_data.PersonalDataActivity"
-            android:screenOrientation="portrait"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".ui.order.OrderSumActivity"></activity>
+        <activity
+            android:name=".ui.center_data.PersonalDataActivity"
             android:label="Personal Data"
             android:parentActivityName=".ui.home.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.center_data.CenterDataActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.center_data.CenterDataActivity"
             android:label="Center Data"
             android:parentActivityName=".ui.home.HomeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.assistant.AssistantsActivity"
+        <activity
+            android:name=".ui.assistant.AssistantsActivity"
             android:label="Assistants"
             android:parentActivityName=".ui.home.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.signup.ChooseTypeActivity"
             android:screenOrientation="portrait"
-            />
-        <activity android:name=".ui.signup.ChooseTypeActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".ui.order.OrderDetailsActivity"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".ui.AddAssistantActivity" />
-        <activity android:name=".ui.signup.SignUpWithFacultyActivity"
-            android:screenOrientation="portrait"
-
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.signup.SignUpOwnerActivity"
+        <activity
+            android:name=".ui.order.OrderDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.AddAssistantActivity" />
+        <activity
+            android:name=".ui.signup.SignUpWithFacultyActivity"
             android:screenOrientation="portrait"
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.signup.SignUpOwnerActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.home.HomeActivity"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait"
-
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:screenOrientation="portrait"
-
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.signup.SignUpActivity"
             android:screenOrientation="portrait"
-
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.splash.SplashActivity"

@@ -52,13 +52,13 @@ public class PaperHomeAdapter extends RecyclerView.Adapter<PaperHomeAdapter.MyVi
         facultyPojos = new ArrayList<>();
     }
 
-    public PaperHomeAdapter(Context context, List<PaperPojo> facultyPojos, String paperType , EventListener listener) {
+    public PaperHomeAdapter(Context context, List<PaperPojo> facultyPojos, String paperType, EventListener listener) {
         this.context = context;
 //            prefManager=new PrefManager(context);
         this.facultyPojos = facultyPojos;
         this.paperType = paperType;
         prefManager = new PrefManager(context);
-        this.listener=listener;
+        this.listener = listener;
     }
 
     @NonNull
@@ -205,9 +205,11 @@ public class PaperHomeAdapter extends RecyclerView.Adapter<PaperHomeAdapter.MyVi
         call.enqueue(new Callback<CustomResponse>() {
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
-                if (response.body().status && response.body().data != null) {
-                    getPapers();
-                    dialog.dismiss();
+                if (response.body() != null) {
+                    if (response.body().status && response.body().data != null) {
+                        getPapers();
+                        dialog.dismiss();
+                    }
                 }
             }
 
@@ -226,11 +228,14 @@ public class PaperHomeAdapter extends RecyclerView.Adapter<PaperHomeAdapter.MyVi
         call.enqueue(new Callback<CustomResponse>() {
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
-                if (response.body().status && response.body().data != null) {
-                    facultyPojos.remove(subjectPojo);
-                    notifyDataSetChanged();
-                    _dialog.dismiss();
-                    listener.onCheckForEmpty();
+                if (response.body() != null) {
+
+                    if (response.body().status && response.body().data != null) {
+                        facultyPojos.remove(subjectPojo);
+                        notifyDataSetChanged();
+                        _dialog.dismiss();
+                        listener.onCheckForEmpty();
+                    }
                 }
             }
 
@@ -250,11 +255,13 @@ public class PaperHomeAdapter extends RecyclerView.Adapter<PaperHomeAdapter.MyVi
         call.enqueue(new Callback<PaperResponse>() {
             @Override
             public void onResponse(Call<PaperResponse> call, Response<PaperResponse> response) {
-                if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    facultyPojos.clear();
-                    facultyPojos.addAll(response.body().data);
-                    notifyDataSetChanged();
+                if (response.body() != null) {
+                    if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.clear();
+                        facultyPojos.addAll(response.body().data);
+                        notifyDataSetChanged();
+                    }
                 }
             }
 

@@ -52,7 +52,7 @@ public class SignUpWithFacultyActivity extends AppCompatActivity implements Facu
         prefManager = new PrefManager(this);
         facultyRecyclerView = findViewById(R.id.facultyRecyclerView);
         facultyPojos = new ArrayList<>();
-        newFacultyPojos= new ArrayList<>();
+        newFacultyPojos = new ArrayList<>();
         progress_view = findViewById(R.id.progress_view);
 
 
@@ -65,10 +65,15 @@ public class SignUpWithFacultyActivity extends AppCompatActivity implements Facu
             @Override
             public void onClick(View view) {
                 if (NetworkUtilities.isOnline(SignUpWithFacultyActivity.this)) {
-                    if (facultyID.size()!=0){
-                        addFaculties();
-                    }else{
-                        Toast.makeText(SignUpWithFacultyActivity.this, "You must choose faculty ", Toast.LENGTH_LONG).show();
+                    if (NetworkUtilities.isFast(SignUpWithFacultyActivity.this)) {
+
+                        if (facultyID.size() != 0) {
+                            addFaculties();
+                        } else {
+                            Toast.makeText(SignUpWithFacultyActivity.this, "You must choose faculty ", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(SignUpWithFacultyActivity.this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Toast.makeText(SignUpWithFacultyActivity.this, "Please , check your network connection", Toast.LENGTH_LONG).show();
@@ -83,7 +88,11 @@ public class SignUpWithFacultyActivity extends AppCompatActivity implements Facu
             }
         });
         if (NetworkUtilities.isOnline(SignUpWithFacultyActivity.this)) {
-            getFaculties();
+            if (NetworkUtilities.isFast(SignUpWithFacultyActivity.this)) {
+                getFaculties();
+            }else {
+                Toast.makeText(SignUpWithFacultyActivity.this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(SignUpWithFacultyActivity.this, "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
@@ -98,17 +107,19 @@ public class SignUpWithFacultyActivity extends AppCompatActivity implements Facu
         call.enqueue(new Callback<FacultyResponse>() {
             @Override
             public void onResponse(Call<FacultyResponse> call, Response<FacultyResponse> response) {
-                if (response.body().status && response.body().cc_id != null ) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                  for (int i=0 ; i <response.body().cc_id.size(); i++ ){
-                      if (response.body().cc_id.get(i).getUniv_id()==prefManager.getUniversityId()){
-                          facultyPojos.add(response.body().cc_id.get(i));
-                      }
-                  }
-                    facultySelectAdapter = new FacultySelectAdapter(SignUpWithFacultyActivity.this, SignUpWithFacultyActivity.this, facultyPojos);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
-                }else {
-                    Toast.makeText(SignUpWithFacultyActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                if (response.body() != null) {
+                    if (response.body().status && response.body().cc_id != null) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        for (int i = 0; i < response.body().cc_id.size(); i++) {
+                            if (response.body().cc_id.get(i).getUniv_id() == prefManager.getUniversityId()) {
+                                facultyPojos.add(response.body().cc_id.get(i));
+                            }
+                        }
+                        facultySelectAdapter = new FacultySelectAdapter(SignUpWithFacultyActivity.this, SignUpWithFacultyActivity.this, facultyPojos);
+                        facultyRecyclerView.setAdapter(facultySelectAdapter);
+                    } else {
+                        Toast.makeText(SignUpWithFacultyActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                    }
                 }
                 progress_view.setVisibility(View.GONE);
             }
@@ -134,16 +145,19 @@ public class SignUpWithFacultyActivity extends AppCompatActivity implements Facu
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
                 progress_view.setVisibility(View.GONE);
-                if (response.body().status){
-                Log.d("tag", "articles total result:: ");
-                progress_view.setVisibility(View.GONE);
-
-                Intent i = new Intent(SignUpWithFacultyActivity.this, SignUpOwnerActivity.class);
-                startActivity(i);
-                }else {
-                    Toast.makeText(SignUpWithFacultyActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                if (response.body() != null) {
+                    if (response.body().status) {
+                        Log.d("tag", "articles total result:: ");
+                        progress_view.setVisibility(View.GONE);
+                        prefManager.getCenterData().setFaculties_id(facultyID);
+                        Intent i = new Intent(SignUpWithFacultyActivity.this, SignUpOwnerActivity.class);
+                        startActivity(i);
+                    } else {
+                        Toast.makeText(SignUpWithFacultyActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
+
             @Override
             public void onFailure(Call<CustomResponse> call, Throwable t) {
                 progress_view.setVisibility(View.GONE);

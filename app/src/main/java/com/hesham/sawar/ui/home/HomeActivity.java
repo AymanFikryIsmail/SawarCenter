@@ -21,6 +21,7 @@ import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
 import com.hesham.sawar.R;
+import com.hesham.sawar.data.response.CustomResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
 import com.hesham.sawar.ui.assistant.AssistantsActivity;
 import com.hesham.sawar.ui.center_data.CenterDataActivity;
@@ -58,8 +59,9 @@ public class HomeActivity extends AppCompatActivity
     PrefManager prefManager;
     NavigationView navigationView;
 
-    TextView nametextView , centerName;
+    TextView nametextView, centerName;
     ImageView centerImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +92,7 @@ public class HomeActivity extends AppCompatActivity
         RequestOptions requestOptions = new RequestOptions();
         requestOptions = requestOptions.placeholder(R.drawable.ellipse_9)
                 .transforms(new CenterCrop(), new CircleCrop()).dontAnimate();
-        Glide.with(this).load(BASE_URL+prefManager.getImageProfile())
+        Glide.with(this).load(BASE_URL + prefManager.getImageProfile())
                 .apply(requestOptions)
                 .into(centerImage);
 
@@ -116,8 +118,8 @@ public class HomeActivity extends AppCompatActivity
                     loadFragment(newsFragment);
                     break;
                 case R.id.orders_tab:
-                        OrderFragment s = new OrderFragment();
-                        loadFragment(s);
+                    OrderFragment s = new OrderFragment();
+                    loadFragment(s);
 
                     break;
             }
@@ -144,8 +146,6 @@ public class HomeActivity extends AppCompatActivity
     }
 
 
-
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -162,8 +162,7 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.personaldata) {
             Intent intent = new Intent(this, PersonalDataActivity.class);
             startActivity(intent);
-        }
-        else if (id == R.id.history) {
+        } else if (id == R.id.history) {
             if (prefManager.getUserPojo().getType() == 1) {
                 HistoryFragment s = new HistoryFragment();
                 loadFragment(s);
@@ -178,7 +177,7 @@ public class HomeActivity extends AppCompatActivity
             } else {
                 Toast.makeText(this, "you are not allowed to view this", Toast.LENGTH_LONG).show();
             }
-        } else if (id ==R.id.sendproblem) {
+        } else if (id == R.id.sendproblem) {
             showDialog();
         } else if (id == R.id.sighnout) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -186,18 +185,13 @@ public class HomeActivity extends AppCompatActivity
             prefManager.setToken("");
             prefManager.removeAll();
 
-        }
-        else if (id == R.id.help) {
+        } else if (id == R.id.help) {
             HelpFragment s = new HelpFragment();
             loadFragment(s);
-        }
-
-        else if (id == R.id.about) {
+        } else if (id == R.id.about) {
             AboutUsFragment s = new AboutUsFragment();
             loadFragment(s);
-        }
-
-        else if (id == R.id.privacy) {
+        } else if (id == R.id.privacy) {
             PrivacyFragment s = new PrivacyFragment();
             loadFragment(s);
         }
@@ -208,19 +202,19 @@ public class HomeActivity extends AppCompatActivity
 
 
     public void postProblem(int hours) {
-        Call<Object> call = Apiservice.getInstance().apiRequest.
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
                 postProblem(hours, prefManager.getCenterId());
-        call.enqueue(new Callback<Object>() {
+        call.enqueue(new Callback<CustomResponse>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                if (response.isSuccessful()) {
-
-                    Toast.makeText(HomeActivity.this, "problem sent succesfully", Toast.LENGTH_LONG).show();
-                }
+            public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().status){
+                        Toast.makeText(HomeActivity.this, "problem sent succesfully", Toast.LENGTH_LONG).show();
+                }}
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<CustomResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
 
             }

@@ -14,23 +14,25 @@ public class SubjectPojo {
     private String name;
 
     private  int sub_id;
+    private  Integer d_id;
 
-
-
-
-    public SubjectPojo(int cc_id, int faculty_id, int year, int term) {
+    public SubjectPojo(int cc_id, int faculty_id, int year, int term, Integer d_id) {
         this.cc_id = cc_id;
         this.faculty_id = faculty_id;
         this.year = year;
         this.term = term;
+        this.d_id = d_id;
+
     }
 
-    public SubjectPojo(int cc_id, int faculty_id, int year, int term, String name) {
+    public SubjectPojo(int cc_id, int faculty_id, int year, int term, String name, Integer d_id) {
         this.cc_id = cc_id;
         this.faculty_id = faculty_id;
         this.year = year;
         this.term = term;
         this.name = name;
+        this.d_id = d_id;
+
     }
 
     public void setName(String name) {

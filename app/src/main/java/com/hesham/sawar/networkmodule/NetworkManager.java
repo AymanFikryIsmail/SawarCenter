@@ -3,6 +3,7 @@ package com.hesham.sawar.networkmodule;
 import android.text.TextUtils;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -19,7 +20,7 @@ import static java.lang.String.format;
 
 public class NetworkManager {
     protected static Retrofit retrofit;
-    public static String BASE_URL= "http://sawarservice.com/";//http://192.168.43.104:3000/  http://sawarservice.com/
+    public static String BASE_URL= "http://192.168.43.104:3000/";//"http://sawarservice.com/";//http://192.168.43.104:3000/  http://sawarservice.com/
 
     private ApiRequest apiRequest;
     private static NetworkManager networkManager;
@@ -41,11 +42,14 @@ public class NetworkManager {
                 .baseUrl(BASE_URL);
 
         if (!TextUtils.isEmpty(githubToken)) {
-            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+            OkHttpClient client = new OkHttpClient.Builder()
+               .readTimeout(20, TimeUnit.SECONDS)
+                    .connectTimeout(20, TimeUnit.SECONDS).addInterceptor(new Interceptor() {
                 @Override public Response intercept(Chain chain) throws IOException {
                     Request request = chain.request();
                     Request newReq = request.newBuilder()
-                            .addHeader("Authorization", format("token %s", githubToken))
+
+//                            .addHeader("Authorization", format("token %s", githubToken))
                             .build();
                     return chain.proceed(newReq);
                 }

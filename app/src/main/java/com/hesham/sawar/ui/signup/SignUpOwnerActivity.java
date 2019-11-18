@@ -62,7 +62,11 @@ public class SignUpOwnerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (NetworkUtilities.isOnline(SignUpOwnerActivity.this)) {
-                    signup();
+                    if (NetworkUtilities.isFast(SignUpOwnerActivity.this)) {
+                        signup();
+                    }else {
+                        Toast.makeText(SignUpOwnerActivity.this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(SignUpOwnerActivity.this, "Please , check your network connection", Toast.LENGTH_LONG).show();
                 }
@@ -83,17 +87,19 @@ public class SignUpOwnerActivity extends AppCompatActivity {
         call.enqueue(new Callback<CenterResponse>() {
             @Override
             public void onResponse(Call<CenterResponse> call, Response<CenterResponse> response) {
-                if (response.body().status && response.body().data != null) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    centerPojos.addAll(response.body().data);
+                if (response.body() != null) {
+                    if (response.body().status && response.body().data != null) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        centerPojos.addAll(response.body().data);
 
-                    for (int i = 1; i <= centerPojos.size(); i++) {
-                        list.add(centerPojos.get(i - 1).getName());
+                        for (int i = 1; i <= centerPojos.size(); i++) {
+                            list.add(centerPojos.get(i - 1).getName());
+                        }
+                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(SignUpOwnerActivity.this,
+                                android.R.layout.simple_spinner_item, list);
+                        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        centerSpinner.setAdapter(dataAdapter);
                     }
-                    ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(SignUpOwnerActivity.this,
-                            android.R.layout.simple_spinner_item, list);
-                    dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    centerSpinner.setAdapter(dataAdapter);
                 }
             }
 
@@ -114,7 +120,11 @@ public class SignUpOwnerActivity extends AppCompatActivity {
 
         if (prefManager.getType() == 0) {
             if (NetworkUtilities.isOnline(SignUpOwnerActivity.this)) {
-                getCenters();
+                if (NetworkUtilities.isFast(SignUpOwnerActivity.this)) {
+                    getCenters();
+                }else {
+                    Toast.makeText(SignUpOwnerActivity.this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(SignUpOwnerActivity.this, "Please , check your network connection", Toast.LENGTH_LONG).show();
             }
@@ -173,13 +183,15 @@ public class SignUpOwnerActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
                     progress_view.setVisibility(View.GONE);
-                    if (response.body().status) {
-                        prefManager.setUserPojo(userPojo);
+                    if (response.body() != null) {
+                        if (response.body().status) {
+                            prefManager.setUserPojo(userPojo);
 //                prefManager.setToken("registered");
-                        Intent i = new Intent(SignUpOwnerActivity.this, LoginActivity.class);
-                        startActivity(i);
-                    } else {
-                        Toast.makeText(SignUpOwnerActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                            Intent i = new Intent(SignUpOwnerActivity.this, LoginActivity.class);
+                            startActivity(i);
+                        } else {
+                            Toast.makeText(SignUpOwnerActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
 

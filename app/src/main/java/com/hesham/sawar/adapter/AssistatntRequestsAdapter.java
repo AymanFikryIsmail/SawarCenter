@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.hesham.sawar.R;
 import com.hesham.sawar.data.model.UserPojo;
 import com.hesham.sawar.data.response.AssistantResponse;
+import com.hesham.sawar.data.response.CustomResponse;
 import com.hesham.sawar.data.response.UserResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
 
@@ -115,17 +116,20 @@ public class AssistatntRequestsAdapter extends RecyclerView.Adapter<AssistatntRe
 
 
     public void acceptAssistants(final UserPojo userPojo) {//prefManager.getCenterId()
-        Call<Object> call = Apiservice.getInstance().apiRequest.
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
                 acceptAssistants(userPojo.getId());
-        call.enqueue(new Callback<Object>() {
+        call.enqueue(new Callback<CustomResponse>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                facultyPojos.remove(userPojo);
-                notifyDataSetChanged();
-            }
+            public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().status) {
+                        facultyPojos.remove(userPojo);
+                        notifyDataSetChanged();
+                    }
+                }}
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<CustomResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
 
             }
@@ -134,17 +138,19 @@ public class AssistatntRequestsAdapter extends RecyclerView.Adapter<AssistatntRe
 
 
     public void rejectAssistants(final UserPojo userPojo) {//prefManager.getCenterId()
-        Call<Object> call = Apiservice.getInstance().apiRequest.
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
                 rejectAssistants(userPojo.getId());
-        call.enqueue(new Callback<Object>() {
+        call.enqueue(new Callback<CustomResponse>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-               facultyPojos.remove(userPojo);
-                notifyDataSetChanged();
-            }
-
+            public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().status) {
+                        facultyPojos.remove(userPojo);
+                        notifyDataSetChanged();
+                    }
+                }}
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<CustomResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
 
             }

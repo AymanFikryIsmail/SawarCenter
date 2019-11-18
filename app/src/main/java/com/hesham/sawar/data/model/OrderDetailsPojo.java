@@ -13,6 +13,8 @@ public class OrderDetailsPojo {
     @SerializedName("subject")
     private String subject;
     @SerializedName("no")
+    private int no;
+    @SerializedName("paper_num")
     private int page;
     private int sub_id;
     private int p_id;
@@ -67,5 +69,9 @@ public class OrderDetailsPojo {
 
     public String getType() {
         return type;
+    }
+
+    public int getNo() {
+        return no;
     }
 }

@@ -78,7 +78,7 @@ public class OrderPojo implements Serializable {
 
         long val = this.date;
         Date date=new Date(val);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateText = dateFormatter.format(date);
 //        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 //        Date newDate = null;

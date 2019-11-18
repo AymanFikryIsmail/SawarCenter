@@ -29,7 +29,7 @@ public class UserPojo implements Serializable {
     private int univ;
     private String university;
     private ArrayList<FacultyPojo> faculties;
-
+    private ArrayList<Integer>  faculties_id;
     private String logo;
     public UserPojo() {
     }
@@ -56,15 +56,16 @@ public class UserPojo implements Serializable {
         this.univ = univ;
         this.logo = logo;
     }
-    public UserPojo(int cc_id , String name, String password, String address, String start, String end, int univ, String logo) {
+    public UserPojo(int cc_id , String name, String password, String address, String start, String end, int univ,ArrayList<Integer>  faculties_id , String logo) {
         this.cc_id = cc_id;
         this.name = name;
-        this.password = password;
+        this.passwd = password;
         this.address = address;
         this.start = start;
         this.end = end;
         this.univ = univ;
         this.logo = logo;
+        this.faculties_id=faculties_id;
     }
     public String getName() {
         return name;
@@ -76,6 +77,10 @@ public class UserPojo implements Serializable {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getPasswd() {
+        return passwd;
     }
 
     public String getAddress() {
@@ -184,6 +189,14 @@ public class UserPojo implements Serializable {
 
     public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    public ArrayList<Integer> getFaculties_id() {
+        return faculties_id;
+    }
+
+    public void setFaculties_id(ArrayList<Integer> faculties_id) {
+        this.faculties_id = faculties_id;
     }
 }
 //

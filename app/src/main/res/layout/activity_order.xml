@@ -7,197 +7,219 @@
     android:background="@drawable/backgrond"
     android:orientation="vertical"
     tools:context=".ui.order.OrderDetailsActivity">
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <RelativeLayout
+                android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/header"
                 android:layout_marginTop="10dp"
 
                 >
+
                 <TextView
+                    android:id="@+id/text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="order Details "
-                    android:id="@+id/text"
-                    android:textSize="24sp"
-                    android:textColor="@color/black"
                     android:layout_marginStart="20dp"
+                    android:text="order Details "
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
 
                     />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/black"
                     android:layout_below="@+id/text"
                     android:layout_marginEnd="70dp"
-                    />
+                    android:background="@color/black" />
             </RelativeLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/headerId"
-        android:layout_below="@+id/header"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="10dp"
-        android:orientation="horizontal"
-        android:padding="16dp">
 
-
-
-        <TextView
-            android:id="@+id/ordername"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="name  "
-            android:textColor="@color/textcolor2"
-            android:textSize="12sp"
-            />
-
-        <TextView
-            android:id="@+id/orderno"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:layout_marginStart="20dp"
-            android:text="Number of copies"
-            android:textColor="@color/textcolor2"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/orderprice"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:layout_marginStart="25dp"
-            android:text="price "
-            android:textColor="@color/textcolor2"
-            android:textSize="12sp" />
-
-
-    </LinearLayout>
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/emptyLayout"
-        android:text="Nothing to show"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:visibility="gone"
-
-        />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/termRecyclerView"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        android:layout_below="@+id/headerId"
-        />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:orientation="vertical"
-        android:gravity="end"
-        android:layout_marginEnd="110dp"
-        android:layout_marginBottom="80dp"
-        android:layout_below="@+id/termRecyclerView"
-
-        android:id="@+id/calculationId">
-        <View
-            android:layout_width="50dp"
-            android:layout_height="1dp"
-            android:background="@color/black"
-            android:layout_below="@+id/text"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/totalPriceCart"
-            android:text="000"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginEnd="15dp"
-            />
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="15dp"
-            >
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/headerId"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/servicetitle"
-                android:text="service"
-                android:layout_marginEnd="50dp"
-                android:textColor="@color/colorPrimary"
-                />
+                android:layout_below="@+id/header"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+
+                <TextView
+                    android:id="@+id/ordername"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Name  "
+                    android:textColor="@color/textcolor2"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/orderno"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:text="Number of copies"
+                    android:textColor="@color/textcolor2"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/orderprice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_weight="2"
+                    android:text="Price "
+                    android:textColor="@color/textcolor2"
+                    android:textSize="12sp" />
+
+
+            </LinearLayout>
+
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/totalServiceCart"
-                android:text=" 000"
-                android:layout_toEndOf="@+id/servicetitle"
+                android:id="@+id/emptyLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Nothing to show"
+                android:visibility="gone"
+
                 />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/termRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/headerId"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="16dp" />
+
+            <LinearLayout
+                android:id="@+id/calculationId"
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/termRecyclerView"
+                android:layout_marginEnd="110dp"
+                android:layout_marginBottom="80dp"
+                android:gravity="end"
+
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/text"
+                    android:background="@color/black" />
+
+                <TextView
+                    android:id="@+id/totalPriceCart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="000" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/servicetitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="50dp"
+                        android:text="service"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/totalServiceCart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/servicetitle"
+                        android:text=" 000" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/text"
+                    android:background="@color/black" />
+
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+
+                    >
+
+                    <TextView
+                        android:id="@+id/totaltitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="50dp"
+                        android:text="total"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/totalCart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/totaltitle"
+                        android:text=" 000" />
+                </RelativeLayout>
+            </LinearLayout>
         </RelativeLayout>
-
-        <View
-            android:layout_width="50dp"
-            android:layout_height="1dp"
-            android:background="@color/black"
-            android:layout_below="@+id/text"
-            />
-
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="15dp"
-
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/totaltitle"
-                android:text="total"
-                android:layout_marginEnd="50dp"
-                android:textColor="@color/colorPrimary"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/totalCart"
-                android:text=" 000"
-                android:layout_toEndOf="@+id/totaltitle"
-                />
-        </RelativeLayout>
-    </LinearLayout>
-</RelativeLayout>
 
 
     </androidx.core.widget.NestedScrollView>
-    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:alpha=".5"
+        android:animateLayoutChanges="true"
+        android:background="#8B94C4"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        >
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress_drawable"
+            android:indeterminateDuration="500"
+            android:indeterminateTint="@color/colorPrimary" />
+    </FrameLayout>
+</RelativeLayout>

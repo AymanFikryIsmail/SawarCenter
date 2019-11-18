@@ -13,7 +13,7 @@ import retrofit2.Response;
 
 public class Apiservice {
     public static Apiservice newInstance=null;
-    public ApiRequest apiRequest =NetworkManager.getInstance().createService("");
+    public ApiRequest apiRequest =NetworkManager.getInstance().createService("a");
     private Apiservice(){}
 
     public static Apiservice getInstance(){

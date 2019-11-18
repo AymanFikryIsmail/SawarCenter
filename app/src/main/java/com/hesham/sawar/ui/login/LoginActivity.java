@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.hesham.sawar.R;
+import com.hesham.sawar.data.model.FacultyPojo;
 import com.hesham.sawar.data.model.UserPojo;
 import com.hesham.sawar.data.response.LoginResponse;
 import com.hesham.sawar.data.response.UserResponse;
@@ -26,6 +27,8 @@ import com.hesham.sawar.ui.signup.ChooseTypeActivity;
 import com.hesham.sawar.ui.signup.SignUpActivity;
 import com.hesham.sawar.ui.signup.SignUpWithFacultyActivity;
 import com.hesham.sawar.utils.PrefManager;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isPasswordVisible;
     ImageView eyeId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         eyeId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              togglePassVisability();
+                togglePassVisability();
             }
         });
         eyeId.setImageResource(R.drawable.icon_visibility_outlined);
@@ -61,7 +65,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (NetworkUtilities.isOnline(LoginActivity.this)) {
-                    login();
+                    if (NetworkUtilities.isFast(LoginActivity.this)) {
+                        login();
+                    }else {
+                        Toast.makeText(LoginActivity.this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(LoginActivity.this, "Please , check your network connection", Toast.LENGTH_LONG).show();
                 }
@@ -84,8 +92,8 @@ public class LoginActivity extends AppCompatActivity {
         passwordedit = findViewById(R.id.passwordedit);
 
 
-
     }
+
     private void togglePassVisability() {
         if (isPasswordVisible) {
             String pass = passwordedit.getText().toString();
@@ -103,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
             eyeId.setImageResource(R.drawable.icon_visibility_outlined_blue);
 
         }
-        isPasswordVisible= !isPasswordVisible;
+        isPasswordVisible = !isPasswordVisible;
     }
 
     public void login() {
@@ -120,18 +128,25 @@ public class LoginActivity extends AppCompatActivity {
             call.enqueue(new Callback<LoginResponse>() {
                 @Override
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                    if (response.body().status && response.body().data != null) {
-                        Log.d("tag", "articles total result:: " + response.body().getMessage());
-                        prefManager.setCenterId(response.body().data.getEmployee().getCc_id());
+                    if (response.body() != null) {
+                        if (response.body().status && response.body().data != null) {
+                            Log.d("tag", "articles total result:: " + response.body().getMessage());
+                            prefManager.setCenterId(response.body().data.getEmployee().getCc_id());
+                            ArrayList<Integer> facultyID = new ArrayList<>();
 
-                        prefManager.setCenterData(response.body().data.getCc());
-                        prefManager.setUserPojo(response.body().data.getEmployee());
-                        prefManager.setToken(response.body().getToken());
+                            for ( FacultyPojo fac:response.body().data.getCc().getFaculties()) {
+                                facultyID.add(fac.getId());
+                            }
+                            response.body().data.getCc().setFaculties_id(facultyID);
+                            prefManager.setCenterData(response.body().data.getCc());
+                            prefManager.setUserPojo(response.body().data.getEmployee());
+                            prefManager.setToken(response.body().getToken());
 
-                        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivity(i);
-                    } else {
-                        Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                            Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(i);
+                        } else {
+                            Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
                     progress_view.setVisibility(View.GONE);
 

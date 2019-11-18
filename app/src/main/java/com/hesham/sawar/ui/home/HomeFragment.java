@@ -65,7 +65,11 @@ public class HomeFragment extends Fragment  implements FacultyHomeAdapter.EventL
         facultyRecyclerView.setAdapter(facultySelectAdapter);
         progress_view=view.findViewById(R.id.progress_view);
         if (NetworkUtilities.isOnline(getContext())) {
-            getFaculties();
+            if (NetworkUtilities.isFast(getContext())) {
+                getFaculties();
+            } else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
@@ -83,21 +87,24 @@ public class HomeFragment extends Fragment  implements FacultyHomeAdapter.EventL
         call.enqueue(new Callback<FacultyResponse>() {
             @Override
             public void onResponse(Call<FacultyResponse> call, Response<FacultyResponse> response) {
-                if (response.body().status  && response.body().cc_id != null) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-					facultyPojos.clear();
-                    facultyPojos.addAll(response.body().cc_id);
-                    facultySelectAdapter = new FacultyHomeAdapter(getContext(),HomeFragment.this,facultyPojos);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
-                    progress_view.setVisibility(View.GONE);
+                if (response.body() != null) {
+                    if (response.body().status && response.body().cc_id != null) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.clear();
+                        facultyPojos.addAll(response.body().cc_id);
+                        facultySelectAdapter = new FacultyHomeAdapter(getContext(), HomeFragment.this, facultyPojos);
+                        facultyRecyclerView.setAdapter(facultySelectAdapter);
 
+                    }
                 }
+                progress_view.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<FacultyResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 progress_view.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
 
             }
         });

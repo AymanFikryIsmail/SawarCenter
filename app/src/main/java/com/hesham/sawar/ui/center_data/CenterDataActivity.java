@@ -3,6 +3,8 @@ package com.hesham.sawar.ui.center_data;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.TimePickerDialog;
@@ -33,6 +35,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.hesham.sawar.R;
 import com.hesham.sawar.adapter.CustomSpinnerAdapter;
+import com.hesham.sawar.adapter.FacultySelectAdapter;
+import com.hesham.sawar.adapter.FacultySelectUpdateAdapter;
 import com.hesham.sawar.data.model.FacultyPojo;
 import com.hesham.sawar.data.model.UserPojo;
 import com.hesham.sawar.data.response.CustomResponse;
@@ -50,9 +54,12 @@ import com.hesham.sawar.utils.PrefManager;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -62,10 +69,10 @@ import retrofit2.Response;
 
 import static com.hesham.sawar.networkmodule.NetworkManager.BASE_URL;
 
-public class CenterDataActivity extends AppCompatActivity implements OnRequestImageIntentListener {
+public class CenterDataActivity extends AppCompatActivity implements OnRequestImageIntentListener, FacultySelectUpdateAdapter.EventListener {
 
     PrefManager prefManager;
-    private EditText nameEdit,passwordedit, addressEdit ;
+    private EditText nameEdit, passwordedit, addressEdit;
     private int universityId;
     private TextView fromEdit, toedit;
 
@@ -84,13 +91,23 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
 
     private boolean isPasswordVisible;
     ImageView eyeId;
+    ArrayList<Integer> facultyID = new ArrayList<>();
+
+    private List<FacultyPojo> facultyPojos, facultyList;
+    private RecyclerView facultyRecyclerView;
+    private FacultySelectUpdateAdapter facultySelectAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_center_data);
         universityPojos = new ArrayList<>();
+        facultyPojos = new ArrayList<>();
+        facultyList = new ArrayList<>();
         list = new ArrayList<String>();
         list.add(0, "University served ");
+
+
         progress_view = findViewById(R.id.progress_view);
         eyeId = findViewById(R.id.eyeId);
         eyeId.setOnClickListener(new View.OnClickListener() {
@@ -104,8 +121,15 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addCenter();
-
+                if (NetworkUtilities.isOnline(CenterDataActivity.this)) {
+                    if (NetworkUtilities.isFast(CenterDataActivity.this)) {
+                        addCenter();
+                    }else {
+                        Toast.makeText(CenterDataActivity.this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(CenterDataActivity.this, "Please , check your network connection", Toast.LENGTH_LONG).show();
+                }
             }
         });
         initView();
@@ -118,6 +142,72 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
         });
         addItemsOnSpinner2();
         getUniversities();
+
+
+        ///////// for faculties
+        facultyRecyclerView = findViewById(R.id.facultyRecyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        facultyRecyclerView.setLayoutManager(linearLayoutManager);
+        facultySelectAdapter = new FacultySelectUpdateAdapter(this, this, facultyPojos);
+        facultyRecyclerView.setAdapter(facultySelectAdapter);
+        getFaculties();
+    }
+
+    public void getFaculties() {
+        Call<FacultyResponse> call = Apiservice.getInstance().apiRequest.
+                getFaculties();
+        progress_view.setVisibility(View.VISIBLE);
+
+        call.enqueue(new Callback<FacultyResponse>() {
+            @Override
+            public void onResponse(Call<FacultyResponse> call, Response<FacultyResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().status && response.body().cc_id != null) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.addAll(response.body().cc_id);
+                        setFaculties();
+//                    for (int i=0 ; i <response.body().cc_id.size(); i++ ){
+//                        if (response.body().cc_id.get(i).getUniv_id()==prefManager.getUniversityId()){
+//                            facultyPojos.add(response.body().cc_id.get(i));
+//                        }
+//                    }
+//                    facultySelectAdapter = new FacultySelectUpdateAdapter(CenterDataActivity.this, CenterDataActivity.this, facultyPojos);
+//                    facultyRecyclerView.setAdapter(facultySelectAdapter);
+                    } else {
+                        Toast.makeText(CenterDataActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                    }
+                }
+                progress_view.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<FacultyResponse> call, Throwable t) {
+                Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(CenterDataActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                progress_view.setVisibility(View.GONE);
+
+            }
+        });
+    }
+
+    void setFaculties() {
+        facultyList = new ArrayList<>();
+        facultyID = new ArrayList<>();
+        for (int i = 0; i < facultyPojos.size(); i++) {
+            if (facultyPojos.get(i).getUniv_id() == prefManager.getUniversityId()) {
+//                facultyPojos.add(facultyPojos.get(i));
+                facultyList.add(facultyPojos.get(i));
+
+                for (int x = 0; x < prefManager.getCenterData().getFaculties_id().size(); x++) {
+                    if (prefManager.getCenterData().getFaculties_id().get(x) == facultyPojos.get(i).getId()) {
+                        facultyID.add(facultyPojos.get(i).getId());
+                    }
+                }
+            }
+        }
+        facultySelectAdapter = new FacultySelectUpdateAdapter(CenterDataActivity.this, CenterDataActivity.this, facultyList);
+        facultyRecyclerView.setAdapter(facultySelectAdapter);
+
     }
 
     private void togglePassVisability() {
@@ -138,8 +228,9 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
             eyeId.setImageResource(R.drawable.icon_visibility_outlined_blue);
 
         }
-        isPasswordVisible= !isPasswordVisible;
+        isPasswordVisible = !isPasswordVisible;
     }
+
     void initView() {
         prefManager = new PrefManager(this);
         nameEdit = findViewById(R.id.nameedit);
@@ -150,20 +241,31 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
         addImage = findViewById(R.id.addImage);
 
         nameEdit.setText(prefManager.getCenterData().getName());
-        passwordedit.setText(prefManager.getCenterData().getPassword());
+        passwordedit.setText(prefManager.getCenterData().getPasswd());
         addressEdit.setText(prefManager.getCenterData().getAddress());
         fromEdit.setText(prefManager.getCenterData().getStart());
         toedit.setText(prefManager.getCenterData().getEnd());
+        int startHours = Integer.parseInt(prefManager.getCenterData().getStart().split(":")[0]);
+        int startMinutes = Integer.parseInt(prefManager.getCenterData().getStart().split(":")[1]);
+        startTime = Calendar.getInstance();
+        startTime.set(Calendar.HOUR_OF_DAY, startHours);
+        startTime.set(Calendar.MINUTE, startMinutes);
 
+        int endHours = Integer.parseInt(prefManager.getCenterData().getEnd().split(":")[0]);
+        int endMinutes = Integer.parseInt(prefManager.getCenterData().getEnd().split(":")[1]);
+        endTime = Calendar.getInstance();
+        endTime.set(Calendar.HOUR_OF_DAY, endHours);
+        endTime.set(Calendar.MINUTE, endMinutes);
+
+        logo= prefManager.getCenterData().getLogo();
         RequestOptions requestOptions = new RequestOptions();
         requestOptions = requestOptions.placeholder(R.drawable.ellipse_9)
                 .transforms(new CenterCrop()).dontAnimate();
-        Glide.with(this).load( BASE_URL+prefManager.getCenterData().getLogo())
+        Glide.with(this).load(BASE_URL + prefManager.getCenterData().getLogo())
                 .apply(requestOptions)
                 .into(addImage);
 
-
-
+//        startTime.setTime(prefManager.getCenterData().getStart());
         fromEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,6 +327,10 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 universityId = i;
+                if (universityId != 0) {
+                    prefManager.setUniversityId(universityPojos.get(universityId - 1).getId());
+                    setFaculties();
+                }
             }
 
             @Override
@@ -234,22 +340,23 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
         });
 
     }
+
     public void getUniversities() {
         Call<FacultyResponse> call = Apiservice.getInstance().apiRequest.
                 getUniversities();
         call.enqueue(new Callback<FacultyResponse>() {
             @Override
             public void onResponse(Call<FacultyResponse> call, Response<FacultyResponse> response) {
-                if (response.body().status && response.body().cc_id != null) {
+                if (response.body()!=null&&response.body().status && response.body().cc_id != null) {
                     Log.d("tag", "articles total result:: " + response.body().getMessage());
                     universityPojos.addAll(response.body().cc_id);
-                    int position=0;
-                    int selectedUnivId=prefManager.getCenterData().getUniv();
+                    int position = 0;
+                    int selectedUnivId = prefManager.getCenterData().getUniv();
 
                     for (int i = 1; i <= universityPojos.size(); i++) {
                         list.add(universityPojos.get(i - 1).getName());
-                        if (universityPojos.get(i - 1).getId()==selectedUnivId){
-                            position=i;
+                        if (universityPojos.get(i - 1).getId() == selectedUnivId) {
+                            position = i;
                         }
                     }
                     customSpinnerAdapter = new CustomSpinnerAdapter(CenterDataActivity.this, list, "University Served");
@@ -258,7 +365,7 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
 
                     universitySpinner.setAdapter(customSpinnerAdapter);
 
-                    universitySpinner.setSelection(position,true);
+                    universitySpinner.setSelection(position, true);
                 }
             }
 
@@ -269,7 +376,6 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
             }
         });
     }
-
 
 
     public void addCenter() {
@@ -289,29 +395,36 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
             Toast.makeText(CenterDataActivity.this, "Please enter close time ", Toast.LENGTH_LONG).show();
         } else if (universityId == 0) {
             Toast.makeText(CenterDataActivity.this, "please choose university ", Toast.LENGTH_LONG).show();
-        } else {
+        } else if (facultyID.size()==0){
+            Toast.makeText(this, "You must choose faculty ", Toast.LENGTH_LONG).show();
+        }
+        else {
             String start = DateFormat.getTimeInstance().format(startTime.getTime()).split(" ")[0];
             String end = DateFormat.getTimeInstance().format(endTime.getTime()).split(" ")[0];
 
             progress_view.setVisibility(View.VISIBLE);
-            final UserPojo userPojo = new UserPojo(prefManager.getCenterId()  ,nameEdit.getText().toString(), passwordedit.getText().toString(), addressEdit.getText().toString()
+            final UserPojo userPojo = new UserPojo(prefManager.getCenterId(), nameEdit.getText().toString(), passwordedit.getText().toString(), addressEdit.getText().toString()
                     , start, end,
-                    universityPojos.get(universityId - 1).getId(), logo);
+                    universityPojos.get(universityId - 1).getId(), facultyID, logo);
             Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
                     updateCC(userPojo);
             if (NetworkUtilities.isOnline(this)) {
+                if (NetworkUtilities.isFast(this)) {
 
                 call.enqueue(new Callback<CustomResponse>() {
                     @Override
                     public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
-                        if (response.body().status ) {
-                            Log.d("tag", "articles total result:: " + response.body().getMessage());
-                            prefManager.setCenterData(userPojo);
-//                            prefManager.setUniversityId( universityPojos.get(universityId - 1).getId());
-                            progress_view.setVisibility(View.GONE);
+                        if (response.body() != null) {
 
-                            Intent i = new Intent(CenterDataActivity.this, HomeActivity.class);
-                            startActivity(i);
+                            if (response.body().status) {
+                                Log.d("tag", "articles total result:: " + response.body().getMessage());
+                                prefManager.setCenterData(userPojo);
+//                            prefManager.setUniversityId( universityPojos.get(universityId - 1).getId());
+                                progress_view.setVisibility(View.GONE);
+
+                                Intent i = new Intent(CenterDataActivity.this, HomeActivity.class);
+                                startActivity(i);
+                            }
                         }
                     }
 
@@ -322,11 +435,15 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
                         Toast.makeText(CenterDataActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
                     }
                 });
+                }else {
+                    Toast.makeText(CenterDataActivity.this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(CenterDataActivity.this, "Please , check your network connection", Toast.LENGTH_LONG).show();
             }
         }
     }
+
     public void uploadImage() {
         RequestBody imageFileRb = null;
         if (imageFile != null) {
@@ -336,6 +453,8 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
         Call<ImageResponse> call = Apiservice.getInstance().apiRequest.
                 uploadProfileImages(imageFileRb);
         if (NetworkUtilities.isOnline(this)) {
+            if (NetworkUtilities.isFast(this)) {
+
             call.enqueue(new Callback<ImageResponse>() {
                 @Override
                 public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
@@ -362,6 +481,9 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
                     Toast.makeText(CenterDataActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
                 }
             });
+            }else {
+                Toast.makeText(CenterDataActivity.this,"Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(CenterDataActivity.this, "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
@@ -432,5 +554,14 @@ public class CenterDataActivity extends AppCompatActivity implements OnRequestIm
 
         return isValidPhone;
 
+    }
+
+    @Override
+    public void onChange(int facultyId, boolean check) {
+        if (check) {
+            facultyID.add(facultyId);
+        } else {
+            facultyID.remove((Integer) facultyId);
+        }
     }
 }

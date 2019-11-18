@@ -1,16 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="10dp"
+    android:orientation="vertical"
+    android:layout_marginBottom="10dp"
+    android:paddingStart="10dp"
+    android:layout_marginTop="10dp"
     >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginBottom="5dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/outDatedOrder"
+            android:textColor="#f00"
+            android:text="Timeout"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:visibility="gone"
+
+            />
+        <TextView
+            android:id="@+id/receivededOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Received"
+            android:textColor="#f00"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:visibility="gone"
+
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/canceledOrder"
+            android:textColor="#f00"
+            android:text="Order has been cancelled"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone"
+
+            />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="15dp">
+        >
 
         <TextView
             android:id="@+id/ordername"
@@ -76,21 +124,8 @@
         android:layout_alignParentEnd="true"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/canceledOrder"
-            android:layout_marginBottom="5dp"
-            android:textColor="#f00"
-            android:text="Order has been cancelled"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/outDatedOrder"
-            android:layout_marginBottom="5dp"
-            android:visibility="gone"
-            android:textColor="#f00"
-            android:text="Timeout"/>
+
+
         <Button
             android:id="@+id/deleteBtn"
             android:layout_width="wrap_content"
@@ -102,4 +137,7 @@
             android:textColor="@color/white"
             android:textSize="14sp" />
     </LinearLayout>
-</RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

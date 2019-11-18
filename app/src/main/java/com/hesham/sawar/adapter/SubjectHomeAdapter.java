@@ -62,15 +62,17 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
         facultyPojos = new ArrayList<>();
     }
 
-    int years, term;
+    int years, term ;
+    Integer depId;
 
-    public SubjectHomeAdapter(Context context, EventListener listener, List<SubjectPojo> facultyPojos, int years, int term) {
+    public SubjectHomeAdapter(Context context, EventListener listener, List<SubjectPojo> facultyPojos, int years, int term , Integer depid) {
         this.context = context;
         prefManager = new PrefManager(context);
         this.facultyPojos = facultyPojos;
         this.listener = listener;
         this.years = years;
         this.term = term;
+        this.depId = depId;
 
     }
 
@@ -209,13 +211,14 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
         call.enqueue(new Callback<CustomResponse>() {
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
-                if (response.body().status && response.body().data != null) {
+                if (response.body().status) {
+                    if (response.body().status && response.body().data != null) {
 
-                    getSubjects();
-                    dialog.dismiss();
+                        getSubjects();
+                        dialog.dismiss();
+                    }
                 }
             }
-
             @Override
             public void onFailure(Call<CustomResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
@@ -231,13 +234,14 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
         call.enqueue(new Callback<CustomResponse>() {
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
-                if (response.body().status && response.body().data != null) {
-                    facultyPojos.remove(subjectPojo);
-                    SubjectHomeAdapter.this.notifyDataSetChanged();
-                    _dialog.dismiss();
-                    listener.onCheckForEmpty();
+                if (response.body() != null) {
+                    if (response.body().status && response.body().data != null) {
+                        facultyPojos.remove(subjectPojo);
+                        SubjectHomeAdapter.this.notifyDataSetChanged();
+                        _dialog.dismiss();
+                        listener.onCheckForEmpty();
+                    }
                 }
-
             }
 
             @Override
@@ -251,17 +255,19 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
 
 
     public void getSubjects() {//prefManager.getCenterId()
-        SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getFacultyId(), years, term);
+        SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getFacultyId(), years, term ,depId);
         Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
                 getAllSubjects(subjectPojo);
         call.enqueue(new Callback<SubjectResponse>() {
             @Override
             public void onResponse(Call<SubjectResponse> call, Response<SubjectResponse> response) {
-                if (response.body().status && response.body().cc_id != null) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    facultyPojos.clear();
-                    facultyPojos.addAll(response.body().cc_id);
-                    notifyDataSetChanged();
+                if (response.body().status) {
+                    if (response.body().status && response.body().cc_id != null) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.clear();
+                        facultyPojos.addAll(response.body().cc_id);
+                        notifyDataSetChanged();
+                    }
                 }
             }
 

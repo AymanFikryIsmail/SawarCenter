@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,30 +52,38 @@ public class AssistantsFragment extends Fragment {
 
     PrefManager prefManager;
     TextView emptyLayout;
+    private FrameLayout progress_view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_assistants, container, false);
-        prefManager=new PrefManager(getContext());
-        facultyRecyclerView=view.findViewById(R.id.termRecyclerView);
+        View view = inflater.inflate(R.layout.fragment_assistants, container, false);
+        prefManager = new PrefManager(getContext());
+        facultyRecyclerView = view.findViewById(R.id.termRecyclerView);
         facultyPojos = new ArrayList<>();
-        emptyLayout=view.findViewById(R.id.emptyLayout);
+        emptyLayout = view.findViewById(R.id.emptyLayout);
+        progress_view = view.findViewById(R.id.progress_view);
+
         hideEmpty();
 
-        RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext() );
+        RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext());
         facultyRecyclerView.setLayoutManager(gridLayoutManager);
-        facultySelectAdapter = new AssistatntAdapter(getContext(),facultyPojos);
+        facultySelectAdapter = new AssistatntAdapter(getContext(), facultyPojos);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
         if (NetworkUtilities.isOnline(getContext())) {
-            getAssistants();
+            if (NetworkUtilities.isFast(getContext())) {
+                getAssistants();
+            }else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
 
         return view;
     }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -84,7 +93,7 @@ public class AssistantsFragment extends Fragment {
 //            getAssistants();
             // If we are becoming invisible, then...
             if (!isVisibleToUser) {
-            }else {
+            } else {
                 getAssistants();
             }
         }
@@ -94,17 +103,24 @@ public class AssistantsFragment extends Fragment {
     public void getAssistants() {//prefManager.getCenterId()
         Call<AssistantResponse> call = Apiservice.getInstance().apiRequest.
                 getAllAssistants(prefManager.getCenterId());
+        progress_view.setVisibility(View.VISIBLE);
+
         call.enqueue(new Callback<AssistantResponse>() {
             @Override
             public void onResponse(Call<AssistantResponse> call, Response<AssistantResponse> response) {
-                if (response.body().status  && response.body().cc_id != null) {//response.body().status  &&
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    facultyPojos.clear();
-                    facultyPojos.addAll(response.body().cc_id);
-                    checkForEmpty();
-                    facultySelectAdapter = new AssistatntAdapter(getContext(),facultyPojos);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
+                if (response.body() != null) {
+                    if (response.body().status && response.body().cc_id != null) {//response.body().status  &&
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.clear();
+                        facultyPojos.addAll(response.body().cc_id);
+                        checkForEmpty();
+                        facultySelectAdapter = new AssistatntAdapter(getContext(), facultyPojos);
+                        facultyRecyclerView.setAdapter(facultySelectAdapter);
+                    }
                 }
+
+                progress_view.setVisibility(View.GONE);
+
             }
 
             @Override
@@ -112,21 +128,25 @@ public class AssistantsFragment extends Fragment {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
                 showEmpty();
+                progress_view.setVisibility(View.GONE);
+
             }
         });
     }
 
-    public  void checkForEmpty(){
-        if (facultyPojos.size()==0){
+    public void checkForEmpty() {
+        if (facultyPojos.size() == 0) {
             showEmpty();
-        }else {
+        } else {
             hideEmpty();
         }
     }
-    void showEmpty(){
+
+    void showEmpty() {
         emptyLayout.setVisibility(View.VISIBLE);
     }
-    void hideEmpty(){
+
+    void hideEmpty() {
         emptyLayout.setVisibility(View.GONE);
     }
 }

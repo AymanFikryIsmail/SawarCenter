@@ -55,14 +55,14 @@ public class YearsFragment extends Fragment  implements YearHomeAdapter.EventLis
         super.onCreate(savedInstanceState);
         yearsNames = new ArrayList<>();
         yearsNames.add("First year");
-        yearsNames.add("second year");
-        yearsNames.add("third year");
-        yearsNames.add("forth year");
+        yearsNames.add("Second year");
+        yearsNames.add("Third year");
+        yearsNames.add("Fourth year");
         if (years==5){
-            yearsNames.add("fifth year");
+            yearsNames.add("Fifth year");
         }else if (years==6){
-            yearsNames.add("fifth year");
-            yearsNames.add("sixth year");
+            yearsNames.add("Fifth year");
+            yearsNames.add("Sixth year");
         }
     }
 

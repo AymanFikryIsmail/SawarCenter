@@ -7,8 +7,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hesham.sawar.R;
 import com.hesham.sawar.adapter.OrderDetailsAdapter;
@@ -17,6 +19,7 @@ import com.hesham.sawar.data.model.OrderPojo;
 import com.hesham.sawar.data.model.PaperPojo;
 import com.hesham.sawar.data.response.DetailsResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
+import com.hesham.sawar.networkmodule.NetworkUtilities;
 import com.hesham.sawar.utils.PrefManager;
 
 import java.util.ArrayList;
@@ -31,7 +34,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
 
     private List<OrderDetailsPojo> orderDetailsPojos;
-    private ArrayList<OrderPojo> orderPojos;
 
     private RecyclerView facultyRecyclerView;
     private OrderDetailsAdapter facultySelectAdapter;
@@ -43,6 +45,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private TextView totalPrice, totalService, totalMonye;
     double total_service, total_money;
     double total_Price = 0;
+    private FrameLayout progress_view;
+    double orderservice , ordertotal;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,35 +55,50 @@ public class OrderDetailsActivity extends AppCompatActivity {
         facultyRecyclerView=findViewById(R.id.termRecyclerView);
         calculationId=findViewById(R.id.calculationId);
         emptyLayout=findViewById(R.id.emptyLayout);
+        progress_view = findViewById(R.id.progress_view);
+
         hideEmpty();
         prefManager = new PrefManager(this);
-        orderPojos = new ArrayList<>();
-        orderPojos=(ArrayList<OrderPojo>)getIntent().getSerializableExtra("orderList");
-        if (orderPojos!=null){
 
-        }else {
+        if (getIntent().getExtras()!=null){
             orderid=getIntent().getIntExtra("orderid",0);
-            orderDetailsPojos = new ArrayList<>();
+            ordertotal= getIntent().getDoubleExtra("ordertotal",0);
+            orderservice =getIntent().getDoubleExtra("orderservice",0);
+        }
+        initView();
+        orderDetailsPojos = new ArrayList<>();
             RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(this);
             facultyRecyclerView.setLayoutManager(gridLayoutManager);
             facultySelectAdapter = new OrderDetailsAdapter(this, orderDetailsPojos);
             facultyRecyclerView.setAdapter(facultySelectAdapter);
-            getOrdersDetails();
+        if (NetworkUtilities.isOnline(this)) {
+            if (NetworkUtilities.isFast(this)) {
+                getOrdersDetails();
+            }else {
+                Toast.makeText(this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(this, "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
+//        calculateTotalPrice();
+
     }
     HashMap<Integer, OrderDetailsPojo> paperPojoHashMap;
-    void initView(View view) {
-        totalPrice = view.findViewById(R.id.totalPriceCart);
-        totalService = view.findViewById(R.id.totalServiceCart);
-        totalMonye = view.findViewById(R.id.totalCart);
-        calculateTotalPrice();
+       void initView() {
+        totalPrice = findViewById(R.id.totalPriceCart);
+        totalService = findViewById(R.id.totalServiceCart);
+        totalMonye = findViewById(R.id.totalCart);
+           totalService.setText(orderservice + "");
+           totalPrice.setText(ordertotal + "");
+           total_money = (ordertotal + orderservice);
+           totalMonye.setText(total_money + "");
 
     }
 
     void calculateTotalPrice() {
         total_Price = 0;
-        for (int i = 0; i < orderPojos.size(); i++) {
-            total_Price = total_Price + orderPojos.get(i).getPrice() * orderPojos.get(i).getNo();
+        for (int i = 0; i < orderDetailsPojos.size(); i++) {
+            total_Price = total_Price + orderDetailsPojos.get(i).getPrice() * orderDetailsPojos.get(i).getNo();
         }
         totalPrice.setText( total_Price + "");
         double service = calculateService();
@@ -93,9 +113,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
         ArrayList<Integer> copyNum = new ArrayList<>();
         ArrayList<Integer> pageNum = new ArrayList<>();
         ;
-        for (int i = 0; i < orderPojos.size(); i++) {
-            copyNum.add(orderPojos.get(i).getNo());
-            pageNum.add(orderPojos.get(i).getPage());
+        for (int i = 0; i < orderDetailsPojos.size(); i++) {
+            copyNum.add(orderDetailsPojos.get(i).getNo());
+            pageNum.add(orderDetailsPojos.get(i).getPage());
         }
         int x = 5;
         double sum = 0;
@@ -127,29 +147,38 @@ public class OrderDetailsActivity extends AppCompatActivity {
         public void getOrdersDetails() {//prefManager.getCenterId()
         Call<DetailsResponse> call = Apiservice.getInstance().apiRequest.
                 getOrderDetails(orderid);
-        call.enqueue(new Callback<DetailsResponse>() {
+            progress_view.setVisibility(View.VISIBLE);
+
+            call.enqueue(new Callback<DetailsResponse>() {
             @Override
             public void onResponse(Call<DetailsResponse> call, Response<DetailsResponse> response) {
-                if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    orderDetailsPojos.clear();
-                    orderDetailsPojos.addAll(response.body().data);
-                    calculateTotalPrice();
-                    if (orderDetailsPojos.size()==0){
+                if (response.body() != null) {
+
+                    if (response.body() != null && response.body().status && response.body().data != null && response.body().data.size() != 0) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        orderDetailsPojos.clear();
+                        orderDetailsPojos.addAll(response.body().data);
+//                        calculateTotalPrice();
+                        if (orderDetailsPojos.size() == 0) {
+                            showEmpty();
+                        } else {
+                            hideEmpty();
+                        }
+                        facultySelectAdapter = new OrderDetailsAdapter(OrderDetailsActivity.this, orderDetailsPojos);
+                        facultyRecyclerView.setAdapter(facultySelectAdapter);
+                    } else {
                         showEmpty();
-                    }else {
-                        hideEmpty();
                     }
-                    facultySelectAdapter = new OrderDetailsAdapter(OrderDetailsActivity.this, orderDetailsPojos);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
-                }else {
-                    showEmpty();
                 }
+                progress_view.setVisibility(View.GONE);
+
             }
 
             @Override
             public void onFailure(Call<DetailsResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(OrderDetailsActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                progress_view.setVisibility(View.GONE);
 
             }
         });

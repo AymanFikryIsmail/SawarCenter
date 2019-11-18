@@ -2,12 +2,12 @@ package com.hesham.sawar.data.model;
 
 public class OrderInfo {
 
-    private int rate;
+    private double rate;
     private double total_income;
     private int order_no;
     private double total_service;
 
-    public int getRate() {
+    public double getRate() {
         return rate;
     }
 

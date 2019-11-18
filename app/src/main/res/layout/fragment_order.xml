@@ -35,6 +35,16 @@
         android:textColor="@color/black"
         android:background="@drawable/progress_indicators_circular"
         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sum"
+        android:text="sum"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="15sp"
+        android:textColor="@color/black"
+        />
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,7 @@ public class HistoryFragment extends Fragment {
 
     PrefManager prefManager;
     TextView emptyLayout;
+    private FrameLayout progress_view;
 
     TextView totalorders , totalservice ,totalrate ,totalincome;
     @Override
@@ -55,6 +57,7 @@ public class HistoryFragment extends Fragment {
         prefManager = new PrefManager(getContext());
         emptyLayout=view.findViewById(R.id.emptyLayout);
         hideEmpty();
+        progress_view = view.findViewById(R.id.progress_view);
 
         facultyPojos = new ArrayList<>();
         RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext() );
@@ -67,8 +70,13 @@ public class HistoryFragment extends Fragment {
         totalrate=view.findViewById(R.id.totalrate);
         totalincome=view.findViewById(R.id.totalincome);
         if (NetworkUtilities.isOnline(getContext())) {
-            getOrdersHistory();
-            getOrdersInfo();
+            if (NetworkUtilities.isFast(getContext())) {
+                getOrdersHistory();
+                getOrdersInfo();
+            }else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
+
         } else {
             Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
@@ -79,27 +87,35 @@ public class HistoryFragment extends Fragment {
     public void getOrdersHistory() {//prefManager.getCenterId()
         Call<OrderResponse> call = Apiservice.getInstance().apiRequest.
                 getOrderHistory(prefManager.getCenterId());
+        progress_view.setVisibility(View.VISIBLE);
+
         call.enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
-                if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    facultyPojos.clear();
-                    facultyPojos.addAll(response.body().data);
-                    if (facultyPojos.size()==0){
-                        showEmpty();
-                    }else {
-                        hideEmpty();
+                if (response.body() != null) {
+
+                    if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.clear();
+                        facultyPojos.addAll(response.body().data);
+                        if (facultyPojos.size() == 0) {
+                            showEmpty();
+                        } else {
+                            hideEmpty();
+                        }
+                        facultySelectAdapter = new OrderHistoryAdapter(getContext(), facultyPojos);
+                        facultyRecyclerView.setAdapter(facultySelectAdapter);
                     }
-                    facultySelectAdapter = new OrderHistoryAdapter(getContext(), facultyPojos);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
                 }
+                progress_view.setVisibility(View.GONE);
+
             }
 
             @Override
             public void onFailure(Call<OrderResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                progress_view.setVisibility(View.GONE);
 
                 showEmpty();
             }

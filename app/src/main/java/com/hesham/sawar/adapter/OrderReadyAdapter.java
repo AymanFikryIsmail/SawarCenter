@@ -2,6 +2,7 @@ package com.hesham.sawar.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.hesham.sawar.R;
 import com.hesham.sawar.data.model.OrderPojo;
+import com.hesham.sawar.data.response.CustomResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
+import com.hesham.sawar.ui.order.OrderDetailsActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,7 +68,7 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView ordername, date, price, time, canceledOrder , outDatedOrder;
+        public TextView ordername, date, price, time, canceledOrder , receivededOrder , outDatedOrder;
         public Button deleteBtn;
 
         public MyViewHolder(View itemView) {
@@ -78,6 +81,7 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
             canceledOrder = itemView.findViewById(R.id.canceledOrder);
             deleteBtn = itemView.findViewById(R.id.deleteBtn);
             outDatedOrder = itemView.findViewById(R.id.outDatedOrder);
+            receivededOrder = itemView.findViewById(R.id.receivededOrder);
 
         }
 
@@ -94,14 +98,16 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
 
             String pm=convertTime(orderPojo.getFormattedDate());
             time.setText(pm);
+            canceledOrder.setVisibility(View.GONE);
+            receivededOrder.setVisibility(View.GONE);
+            outDatedOrder.setVisibility(View.GONE);
             if (orderPojo.getCancel_s() == 1) {
                 canceledOrder.setVisibility(View.VISIBLE);
             } else {
                 canceledOrder.setVisibility(View.GONE);
             }
             if (orderPojo.getRecieve() == 1) {
-                canceledOrder.setVisibility(View.VISIBLE);
-                canceledOrder.setText("Received");
+                receivededOrder.setVisibility(View.VISIBLE);
             }
             if (isBeforeNow(orderPojo.getLongDate())&&orderPojo.getCancel_s() == 0) {
                 outDatedOrder.setVisibility(View.GONE);
@@ -110,17 +116,29 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
                 outDatedOrder.setText("Time Out");
             }
 
-            if (orderPojo.getRecieve() == 1) {
-                deleteBtn.setText("Done");
-            } else {
+//            if (orderPojo.getRecieve() == 1) {
+//                deleteBtn.setText("Done");
+//            } else {
                 deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         removeOrder(orderPojo);
                     }
                 });
-            }
+//            }
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
+                    Intent intent=new Intent(context, OrderDetailsActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("orderid",orderPojo.getId());
+                    intent.putExtra("ordertotal", orderPojo.getTotal_price());
+                    intent.putExtra("orderservice", orderPojo.getService());
+
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 
@@ -167,19 +185,21 @@ public class OrderReadyAdapter extends RecyclerView.Adapter<OrderReadyAdapter.My
     }
 
     public void removeOrder(final OrderPojo orderPojo) {//prefManager.getCenterId()
-        Call<Object> call = Apiservice.getInstance().apiRequest.
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
                 removeReadyOrder(orderPojo.getId());
-        call.enqueue(new Callback<Object>() {
+        call.enqueue(new Callback<CustomResponse>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                Log.d("tag", "articles total result:: " + response);
-                facultyPojos.remove(orderPojo);
-                listener.onEvent(facultyPojos);
-                OrderReadyAdapter.this.notifyDataSetChanged();
-            }
-
+            public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().status) {
+                        Log.d("tag", "articles total result:: " + response);
+                        facultyPojos.remove(orderPojo);
+                        listener.onEvent(facultyPojos);
+                        OrderReadyAdapter.this.notifyDataSetChanged();
+                    }
+                }}
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<CustomResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
 
             }

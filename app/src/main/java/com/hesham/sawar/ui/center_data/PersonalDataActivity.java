@@ -77,18 +77,21 @@ public class PersonalDataActivity extends AppCompatActivity {
         call.enqueue(new Callback<SignUpResponse>() {
             @Override
             public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
-                if (response.body().status) {
-                    userPojo.setName(nameEdit.getText().toString());
-                    userPojo.setEmail(emailEdit.getText().toString());
-                    userPojo.setPhone(phoneedit.getText().toString());
-                    prefManager.setUserPojo(userPojo);
-                    prefManager.setToken("registered");
-                    progress_view.setVisibility(View.GONE);
-                    Intent i = new Intent(PersonalDataActivity.this, HomeActivity.class);
-                    startActivity(i);
-                } else {
-                    Toast.makeText(PersonalDataActivity.this, response.message(), Toast.LENGTH_LONG).show();
+                if (response.body() != null) {
+                    if (response.body().status) {
+                        userPojo.setName(nameEdit.getText().toString());
+                        userPojo.setEmail(emailEdit.getText().toString());
+                        userPojo.setPhone(phoneedit.getText().toString());
+                        prefManager.setUserPojo(userPojo);
+                        prefManager.setToken("registered");
+                        Intent i = new Intent(PersonalDataActivity.this, HomeActivity.class);
+                        startActivity(i);
+                    } else {
+                        Toast.makeText(PersonalDataActivity.this, response.message(), Toast.LENGTH_LONG).show();
+                    }
                 }
+                progress_view.setVisibility(View.GONE);
+
             }
 
             @Override
