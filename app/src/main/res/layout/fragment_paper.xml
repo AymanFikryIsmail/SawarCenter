@@ -189,6 +189,13 @@
         </HorizontalScrollView>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/categoryRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/white"
+            />
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/termRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
