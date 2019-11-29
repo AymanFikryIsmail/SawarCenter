@@ -1,10 +1,9 @@
-package com.hesham.sawar.ui.subjects;
+package com.hesham.sawar.ui.paper;
 
 import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -22,15 +20,10 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hesham.sawar.R;
-import com.hesham.sawar.adapter.FacultySelectAdapter;
 import com.hesham.sawar.adapter.PaperHomeAdapter;
-import com.hesham.sawar.adapter.SubjectHomeAdapter;
-import com.hesham.sawar.data.model.FacultyPojo;
 import com.hesham.sawar.data.model.PaperPojo;
-import com.hesham.sawar.data.model.SubjectPojo;
 import com.hesham.sawar.data.response.CustomResponse;
 import com.hesham.sawar.data.response.PaperResponse;
-import com.hesham.sawar.data.response.SubjectResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
 import com.hesham.sawar.networkmodule.NetworkUtilities;
 import com.hesham.sawar.ui.home.HomeActivity;
@@ -58,7 +51,7 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
     private RecyclerView facultyRecyclerView;
     private PaperHomeAdapter facultySelectAdapter;
     PrefManager prefManager;
-    private String paperType;
+    private int paperCategory;
     private ImageView backarrowId;
 
     TextView lectureId, handoutId, sectionId, courseId, revisionId;
@@ -94,7 +87,7 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
         initView(view);
         RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext());
         facultyRecyclerView.setLayoutManager(gridLayoutManager);
-        facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperType, PaperFragment.this);
+        facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperCategory, PaperFragment.this);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
         if (NetworkUtilities.isOnline(getContext())) {
             if (NetworkUtilities.isFast(getContext())) {
@@ -119,7 +112,7 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
 
     void initView(View view) {
 
-        paperType = "l";
+        paperCategory = 1;
         lectureId = view.findViewById(R.id.lectureId);
         handoutId = view.findViewById(R.id.handoutId);
         sectionId = view.findViewById(R.id.sectionId);
@@ -146,7 +139,7 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
 
         switch (view.getId()) {
             case R.id.lectureId:
-                paperType = "l";
+                paperCategory = 1;
                 lectureId.setTextColor(getResources().getColor(R.color.colorPrimary));
                 handoutId.setTextColor(getResources().getColor(R.color.grey1));
                 sectionId.setTextColor(getResources().getColor(R.color.grey1));
@@ -162,7 +155,7 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
                 getPapers();
                 break;
             case R.id.handoutId:
-                paperType = "h";
+//                paperCategory = "h";
                 lectureId.setTextColor(getResources().getColor(R.color.grey1));
                 handoutId.setTextColor(getResources().getColor(R.color.colorPrimary));
                 sectionId.setTextColor(getResources().getColor(R.color.grey1));
@@ -177,7 +170,7 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
                 getPapers();
                 break;
             case R.id.sectionId:
-                paperType = "s";
+//                paperCategory = "s";
                 lectureId.setTextColor(getResources().getColor(R.color.grey1));
                 handoutId.setTextColor(getResources().getColor(R.color.grey1));
                 sectionId.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -193,7 +186,7 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
                 getPapers();
                 break;
             case R.id.courseId:
-                paperType = "c";
+//                paperCategory = "c";
                 lectureId.setTextColor(getResources().getColor(R.color.grey1));
                 handoutId.setTextColor(getResources().getColor(R.color.grey1));
                 sectionId.setTextColor(getResources().getColor(R.color.grey1));
@@ -209,7 +202,7 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
                 getPapers();
                 break;
             case R.id.revisionId:
-                paperType = "r";
+//                paperCategory = "r";
                 lectureId.setTextColor(getResources().getColor(R.color.grey1));
                 handoutId.setTextColor(getResources().getColor(R.color.grey1));
                 sectionId.setTextColor(getResources().getColor(R.color.grey1));
@@ -230,7 +223,7 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
 
     public void getPapers() {//prefManager.getCenterId()
         Call<PaperResponse> call = Apiservice.getInstance().apiRequest.
-                getPapers(paperType, prefManager.getSubjectId());
+                getPapers(paperCategory, prefManager.getSubjectId());
         if (NetworkUtilities.isOnline(getContext())) {
             if (NetworkUtilities.isFast(getContext())) {
 
@@ -249,11 +242,11 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
                                 } else {
                                     hideEmpty();
                                 }
-                                facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperType, PaperFragment.this);
+                                facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperCategory, PaperFragment.this);
                                 facultyRecyclerView.setAdapter(facultySelectAdapter);
                             } else {
                                 facultyPojos.clear();
-                                facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperType, PaperFragment.this);
+                                facultySelectAdapter = new PaperHomeAdapter(getContext(), facultyPojos, paperCategory, PaperFragment.this);
                                 facultyRecyclerView.setAdapter(facultySelectAdapter);
                                 showEmpty();
                             }
@@ -325,7 +318,7 @@ public class PaperFragment extends Fragment implements View.OnClickListener, Pap
     }
 
     public void addSubjects(String name, int pages, double price) {//prefManager.getCenterId()
-        PaperPojo subjectPojo = new PaperPojo(name, pages, prefManager.getSubjectId(), price, paperType);
+        PaperPojo subjectPojo = new PaperPojo(name, pages, prefManager.getSubjectId(), price, paperCategory);
         Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
                 addPaper(subjectPojo);
         call.enqueue(new Callback<CustomResponse>() {

@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -18,17 +17,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hesham.sawar.R;
 import com.hesham.sawar.data.model.PaperPojo;
-import com.hesham.sawar.data.model.SubjectPojo;
 import com.hesham.sawar.data.response.CustomResponse;
 import com.hesham.sawar.data.response.PaperResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
-import com.hesham.sawar.ui.subjects.PaperFragment;
-import com.hesham.sawar.ui.subjects.YearsFragment;
 import com.hesham.sawar.utils.PrefManager;
 
 import java.util.ArrayList;
@@ -46,17 +41,17 @@ public class PaperHomeAdapter extends RecyclerView.Adapter<PaperHomeAdapter.MyVi
 
     PrefManager prefManager;
 
-    String paperType;
+    int categoryId;
 
     public PaperHomeAdapter() {
         facultyPojos = new ArrayList<>();
     }
 
-    public PaperHomeAdapter(Context context, List<PaperPojo> facultyPojos, String paperType, EventListener listener) {
+    public PaperHomeAdapter(Context context, List<PaperPojo> facultyPojos, int categoryId, EventListener listener) {
         this.context = context;
 //            prefManager=new PrefManager(context);
         this.facultyPojos = facultyPojos;
-        this.paperType = paperType;
+        this.categoryId = categoryId;
         prefManager = new PrefManager(context);
         this.listener = listener;
     }
@@ -124,12 +119,15 @@ public class PaperHomeAdapter extends RecyclerView.Adapter<PaperHomeAdapter.MyVi
                                     final EditText subname = dialog.findViewById(R.id.papername);
                                     final EditText paperpages = dialog.findViewById(R.id.paperpages);
                                     final EditText paperprice = dialog.findViewById(R.id.paperprice);
+                                    subname.setText(facultyPojo.getName());
+                                    paperpages.setText(facultyPojo.getPage()+"");
+                                    paperprice.setText(facultyPojo.getPrice()+"");
 
 
                                     dialogButton.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            if (subname.getText().toString() == null || paperpages.getText().toString() == null || paperprice.getText().toString() == null) {
+                                            if (subname.getText().toString().isEmpty() || paperpages.getText().toString().isEmpty() || paperprice.getText().toString().isEmpty() ) {
                                                 Toast.makeText(context, "you must enter values", Toast.LENGTH_LONG).show();
                                             } else {
                                                 double price = Double.parseDouble(paperprice.getText().toString());
@@ -251,7 +249,7 @@ public class PaperHomeAdapter extends RecyclerView.Adapter<PaperHomeAdapter.MyVi
 
     public void getPapers() {//prefManager.getCenterId()
         Call<PaperResponse> call = Apiservice.getInstance().apiRequest.
-                getPapers(paperType, prefManager.getSubjectId());
+                getPapers(categoryId, prefManager.getSubjectId());
         call.enqueue(new Callback<PaperResponse>() {
             @Override
             public void onResponse(Call<PaperResponse> call, Response<PaperResponse> response) {

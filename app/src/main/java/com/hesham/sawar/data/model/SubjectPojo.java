@@ -15,6 +15,13 @@ public class SubjectPojo {
 
     private  int sub_id;
     private  Integer d_id;
+    public SubjectPojo(int cc_id, int faculty_id, int year, int term) {
+        this.cc_id = cc_id;
+        this.faculty_id = faculty_id;
+        this.year = year;
+        this.term = term;
+
+    }
 
     public SubjectPojo(int cc_id, int faculty_id, int year, int term, Integer d_id) {
         this.cc_id = cc_id;

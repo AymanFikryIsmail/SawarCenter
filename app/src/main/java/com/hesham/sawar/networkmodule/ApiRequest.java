@@ -81,15 +81,18 @@ public interface ApiRequest {
     @POST("faculty/addtocc")
     Call<CustomResponse> addFacultiesToCenter(@Body FacultyPojo body);
 
-    @POST("faculty/subjects/filter")
+    @POST("faculty/subjects/all")
     Call<SubjectResponse> getAllSubjects(@Body SubjectPojo body);
+
+    @POST("faculty/subjects/filter")
+    Call<SubjectResponse> getFilteredSubjects(@Body SubjectPojo body);
 
     @FormUrlEncoded
     @POST("faculty/departments")
     Call<DepartmentResponse> getAllDepartments(@Field("f_id") int f_id);
 
     @GET("faculty/paper/get")
-    Call<PaperResponse> getPapers(@Query("type") String type , @Query("sub_id") int subId);
+    Call<PaperResponse> getPapers(@Query("category_id") int category_id , @Query("sub_id") int subId);
 
 
     @POST("faculty/subjects/add")

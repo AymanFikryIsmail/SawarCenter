@@ -3,42 +3,28 @@ package com.hesham.sawar.adapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.Typeface;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hesham.sawar.R;
-import com.hesham.sawar.data.model.FacultyPojo;
 import com.hesham.sawar.data.model.SubjectPojo;
-import com.hesham.sawar.data.response.AssistantResponse;
 import com.hesham.sawar.data.response.CustomResponse;
 import com.hesham.sawar.data.response.SubjectResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
-import com.hesham.sawar.ui.subjects.FirstTermFragment;
-import com.hesham.sawar.ui.subjects.PaperFragment;
-import com.hesham.sawar.ui.subjects.YearsFragment;
+import com.hesham.sawar.ui.paper.PaperFragment;
 import com.hesham.sawar.utils.PrefManager;
 
 import java.util.ArrayList;
@@ -132,6 +118,7 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
                                     dialog.setContentView(Dview);
                                     TextView dialogButton = dialog.findViewById(R.id.addsubject);
                                     final EditText subname = dialog.findViewById(R.id.subjectname);
+                                    subname.setText(facultyPojo.getName());
 
                                     dialogButton.setOnClickListener(new View.OnClickListener() {
                                         @Override
@@ -213,8 +200,11 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
                 if (response.body().status) {
                     if (response.body().status && response.body().data != null) {
-
-                        getSubjects();
+                        if (depId == null) {
+                            getSubjects();
+                        } else {
+                            getFilteredSubjects();
+                        }
                         dialog.dismiss();
                     }
                 }
@@ -255,6 +245,31 @@ public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.
 
 
     public void getSubjects() {//prefManager.getCenterId()
+        SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getFacultyId(), years, term );
+        Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
+                getAllSubjects(subjectPojo);
+        call.enqueue(new Callback<SubjectResponse>() {
+            @Override
+            public void onResponse(Call<SubjectResponse> call, Response<SubjectResponse> response) {
+                if (response.body().status) {
+                    if (response.body().status && response.body().cc_id != null) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.clear();
+                        facultyPojos.addAll(response.body().cc_id);
+                        notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SubjectResponse> call, Throwable t) {
+                Log.d("tag", "articles total result:: " + t.getMessage());
+
+            }
+        });
+    }
+
+    public void getFilteredSubjects() {//prefManager.getCenterId()
         SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getFacultyId(), years, term ,depId);
         Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
                 getAllSubjects(subjectPojo);

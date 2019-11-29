@@ -118,7 +118,7 @@
 
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/termRecyclerView"
-                android:layout_marginEnd="110dp"
+                android:layout_marginEnd="70dp"
                 android:layout_marginBottom="80dp"
                 android:gravity="end"
 

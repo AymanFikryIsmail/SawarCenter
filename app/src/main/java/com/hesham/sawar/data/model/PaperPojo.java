@@ -14,16 +14,16 @@ public class PaperPojo {
     private long date;
     private int sub_id;
     private double price;
-    private String type;
+    private int  category_id;
 
 
 
-    public PaperPojo(String name, int page, int sub_id, double price, String type) {
+    public PaperPojo(String name, int page, int sub_id, double price, int category_id) {
         this.name = name;
         this.page = page;
         this.sub_id = sub_id;
         this.price = price;
-        this.type = type;
+        this.category_id = category_id;
     }
 
     public int getPaper_id() {
@@ -76,8 +76,8 @@ public class PaperPojo {
         return price;
     }
 
-    public String getType() {
-        return type;
+    public int getCategoryId() {
+        return category_id;
     }
 
     public void setPage(int page) {

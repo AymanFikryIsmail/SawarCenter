@@ -77,6 +77,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
         View view = inflater.inflate(R.layout.fragment_second_term, container, false);
         facultyRecyclerView = view.findViewById(R.id.termRecyclerView);
         facultyPojos = new ArrayList<>();
+        depPojos = new ArrayList<>();
         emptyLayout=view.findViewById(R.id.emptyLayout);
         progress_view = view.findViewById(R.id.progress_view);
         departmentSpinner = view.findViewById(R.id.departmentSpinner);
@@ -86,7 +87,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                 if (depPojos.size() != 0) {
                     depId = depPojos.get(i).getId();
                 }
-                getSubjects();
+                getFilteredSubjects();
             }
 
             @Override
@@ -119,8 +120,46 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
     }
 
 
-    public void getSubjects() {
+    public void getFilteredSubjects() {
         SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getFacultyId(), years, 2, depId);
+        Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
+                getFilteredSubjects(subjectPojo);
+        progress_view.setVisibility(View.VISIBLE);
+
+        call.enqueue(new Callback<SubjectResponse>() {
+            @Override
+            public void onResponse(Call<SubjectResponse> call, Response<SubjectResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().status && response.body().cc_id != null) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.clear();
+                        facultyPojos.addAll(response.body().cc_id);
+                        if (facultyPojos.size() == 0) {
+                            showEmpty();
+                        } else {
+                            hideEmpty();
+                        }
+                        facultySelectAdapter = new SubjectHomeAdapter(getContext(), SecondTermFragment.this, facultyPojos, years, 2, depId);
+                        facultyRecyclerView.setAdapter(facultySelectAdapter);
+                    }
+                }
+                progress_view.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void onFailure(Call<SubjectResponse> call, Throwable t) {
+                Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+
+                showEmpty();
+                progress_view.setVisibility(View.GONE);
+
+            }
+        });
+    }
+    public void getSubjects() {
+        SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getFacultyId(), years, 2);
         Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
                 getAllSubjects(subjectPojo);
         progress_view.setVisibility(View.VISIBLE);
@@ -157,7 +196,6 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
             }
         });
     }
-
     public void getAllDepartments() {//prefManager.getCenterId()
         Call<DepartmentResponse> call = Apiservice.getInstance().apiRequest.
                 getAllDepartments(prefManager.getFacultyId());
@@ -172,6 +210,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                         depPojos.addAll(response.body().cc_id);
                         if (depPojos.size() == 0) {
                             departmentSpinner.setVisibility(View.GONE);
+                            getSubjects();
                         } else {
                             departmentSpinner.setVisibility(View.VISIBLE);
                             depId = depPojos.get(0).getId();
@@ -239,7 +278,11 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
                 if (response.body().status && response.body().data != null) {
-                    getSubjects();
+                    if (depId == null) {
+                        getSubjects();
+                    } else {
+                        getFilteredSubjects();
+                    }
                 }else {
                     Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
                 }
