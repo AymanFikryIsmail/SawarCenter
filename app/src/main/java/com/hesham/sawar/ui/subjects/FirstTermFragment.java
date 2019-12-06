@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,7 +62,7 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
 
     PrefManager prefManager;
     private int years;
-    TextView emptyLayout;
+    LinearLayout emptyLayout;
     private FrameLayout progress_view;
 
     private Spinner departmentSpinner;
@@ -69,7 +70,6 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
     public FirstTermFragment(int years) {
         this.years = years;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,6 +95,13 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+        emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getAllDepartments();
             }
         });
         hideEmpty();

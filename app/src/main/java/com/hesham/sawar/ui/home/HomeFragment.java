@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.hesham.sawar.R;
@@ -50,6 +51,7 @@ public class HomeFragment extends Fragment  implements FacultyHomeAdapter.EventL
 
 
     PrefManager prefManager;
+    LinearLayout emptyLayout;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,6 +66,25 @@ public class HomeFragment extends Fragment  implements FacultyHomeAdapter.EventL
         facultySelectAdapter = new FacultyHomeAdapter(getContext(),this,facultyPojos);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
         progress_view=view.findViewById(R.id.progress_view);
+        emptyLayout=view.findViewById(R.id.emptyLayout);
+
+        emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callApi();
+            }
+        });
+
+        return view;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        callApi();
+    }
+
+    private  void callApi() {
+        hideEmpty();
         if (NetworkUtilities.isOnline(getContext())) {
             if (NetworkUtilities.isFast(getContext())) {
                 getFaculties();
@@ -73,7 +94,6 @@ public class HomeFragment extends Fragment  implements FacultyHomeAdapter.EventL
         } else {
             Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
-        return view;
     }
 
 
@@ -108,6 +128,14 @@ public class HomeFragment extends Fragment  implements FacultyHomeAdapter.EventL
 
             }
         });
+    }
+
+
+    void showEmpty(){
+        emptyLayout.setVisibility(View.VISIBLE);
+    }
+    void hideEmpty(){
+        emptyLayout.setVisibility(View.GONE);
     }
 
     @Override

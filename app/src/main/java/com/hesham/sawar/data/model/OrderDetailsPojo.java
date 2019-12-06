@@ -20,9 +20,15 @@ public class OrderDetailsPojo {
     private int p_id;
     private int o_id;
     private double price;
+    private String category;
+    @SerializedName("paper_category")
+    private String paper_category;
 
-    @SerializedName("paper_type")
-    private String type;
+    private String year;
+    private String faculty;
+    private String department;
+
+
 
     public OrderDetailsPojo(String name, String subject, int page, int sub_id, int p_id, int o_id, double price, String type) {
         this.name = name;
@@ -32,7 +38,7 @@ public class OrderDetailsPojo {
         this.p_id = p_id;
         this.o_id = o_id;
         this.price = price;
-        this.type = type;
+        this.paper_category = type;
     }
 
     public int getId() {
@@ -67,11 +73,28 @@ public class OrderDetailsPojo {
         return price;
     }
 
-    public String getType() {
-        return type;
+    public String getPaperCategory() {
+        return paper_category;
     }
 
     public int getNo() {
         return no;
+    }
+
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public String getDepartment() {
+        return department;
     }
 }

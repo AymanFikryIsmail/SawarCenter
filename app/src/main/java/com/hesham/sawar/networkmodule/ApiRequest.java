@@ -6,6 +6,7 @@ import com.hesham.sawar.data.model.PaperPojo;
 import com.hesham.sawar.data.model.SubjectPojo;
 import com.hesham.sawar.data.model.UserPojo;
 import com.hesham.sawar.data.response.AssistantResponse;
+import com.hesham.sawar.data.response.CategoryResponse;
 import com.hesham.sawar.data.response.CenterResponse;
 import com.hesham.sawar.data.response.CheckEmployeeResponse;
 import com.hesham.sawar.data.response.CustomResponse;
@@ -84,12 +85,31 @@ public interface ApiRequest {
     @POST("faculty/subjects/all")
     Call<SubjectResponse> getAllSubjects(@Body SubjectPojo body);
 
+
+
+
     @POST("faculty/subjects/filter")
     Call<SubjectResponse> getFilteredSubjects(@Body SubjectPojo body);
 
     @FormUrlEncoded
     @POST("faculty/departments")
     Call<DepartmentResponse> getAllDepartments(@Field("f_id") int f_id);
+
+
+
+    @GET("/faculty/category/get")
+    Call<CategoryResponse> getCategory(@Query("sub_id") int subId);
+
+    @FormUrlEncoded
+    @POST("/faculty/category/add")
+    Call<CustomResponse> addCategory( @Field("name") String name , @Field("sub_id") int subId);
+
+    @FormUrlEncoded
+    @POST("/faculty/category/remove")
+    Call<CustomResponse> removeCategory( @Field("category_id") int category_id);
+    @FormUrlEncoded
+    @POST("/faculty/category/rename")
+    Call<CustomResponse> renameCategory(@Field("name") String name ,  @Field("id") int id);
 
     @GET("faculty/paper/get")
     Call<PaperResponse> getPapers(@Query("category_id") int category_id , @Query("sub_id") int subId);
@@ -172,6 +192,9 @@ public interface ApiRequest {
 
     @GET("order/info")
     Call<OrderInfoResponse> getOrderInfo(@Query("cc_id") int cc_id);
+
+    @GET("order/sum")
+    Call<DetailsResponse> getOrderSum(@Query("orders_id")String orders_id);
 
 
 

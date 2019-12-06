@@ -43,12 +43,55 @@
                     android:layout_marginEnd="70dp"
                     android:background="@color/black" />
             </RelativeLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/title"
+                android:layout_below="@+id/header"
+                >
+                <TextView
+                    android:id="@+id/faculty"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text=" "
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+
+                    />
+                <TextView
+                    android:id="@+id/department"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text=" "
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+
+                    />
+                <TextView
+                    android:id="@+id/year"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text=" "
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/headerId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/header"
+                android:layout_below="@+id/title"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="8dp"
@@ -90,19 +133,6 @@
 
 
             </LinearLayout>
-
-
-            <TextView
-                android:id="@+id/emptyLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="Nothing to show"
-                android:visibility="gone"
-
-                />
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/termRecyclerView"
                 android:layout_width="match_parent"
@@ -198,7 +228,29 @@
 
 
     </androidx.core.widget.NestedScrollView>
+    <LinearLayout
+        android:id="@+id/emptyLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Nothing to show" />
+
+        <ImageView
+            android:id="@+id/refreshId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/progress_indicators_circular" />
+    </LinearLayout>
     <FrameLayout
         android:id="@+id/progress_view"
         android:layout_width="match_parent"

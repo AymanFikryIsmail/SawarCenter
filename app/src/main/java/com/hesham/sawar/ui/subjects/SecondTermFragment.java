@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,7 +57,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
     PrefManager prefManager;
 
     private int years;
-    TextView emptyLayout;
+    LinearLayout emptyLayout;
     private FrameLayout progress_view;
     private Spinner departmentSpinner;
 
@@ -96,6 +97,12 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
             }
         });
         hideEmpty();
+        emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getAllDepartments();
+            }
+        });
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

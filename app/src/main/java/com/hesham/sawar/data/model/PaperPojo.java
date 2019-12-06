@@ -8,6 +8,7 @@ import java.util.Date;
 public class PaperPojo {
 
     private int id;
+    private int cc_id;
     private int paper_id;
     private String name;
     private int page;
@@ -18,8 +19,9 @@ public class PaperPojo {
 
 
 
-    public PaperPojo(String name, int page, int sub_id, double price, int category_id) {
+    public PaperPojo(String name, int cc_id,  int page, int sub_id, double price, int category_id) {
         this.name = name;
+        this.cc_id = cc_id;
         this.page = page;
         this.sub_id = sub_id;
         this.price = price;

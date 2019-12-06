@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:orientation="horizontal"
+    android:layout_marginTop="12dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/ordername"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:paddingEnd="16dp"
+            android:text="name  :"
+            android:textColor="@color/textcolor2"
+            android:textSize="12sp"
+
+            />
+
+        <TextView
+            android:id="@+id/orderno"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/ordername"
+            android:gravity="center"
+            android:text="0 "
+
+            android:textColor="@color/textcolor2"
+            android:textSize="12sp" />
+
+
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

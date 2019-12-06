@@ -41,13 +41,16 @@ public class OrderDetailsActivity extends AppCompatActivity {
     PrefManager prefManager;
     int orderid;
     LinearLayout calculationId;
-    TextView emptyLayout;
+    LinearLayout emptyLayout;
     private TextView totalPrice, totalService, totalMonye;
     double total_service, total_money;
     double total_Price = 0;
     private FrameLayout progress_view;
     double orderservice , ordertotal;
 
+
+    String year , faculty , department ;
+TextView facultyTxt, yearTxt ,  departmentTxt ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +58,16 @@ public class OrderDetailsActivity extends AppCompatActivity {
         facultyRecyclerView=findViewById(R.id.termRecyclerView);
         calculationId=findViewById(R.id.calculationId);
         emptyLayout=findViewById(R.id.emptyLayout);
+        emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callApi();
+            }
+        });
         progress_view = findViewById(R.id.progress_view);
+        facultyTxt= findViewById(R.id.faculty);
+        yearTxt= findViewById(R.id.year);
+        departmentTxt= findViewById(R.id.department);
 
         hideEmpty();
         prefManager = new PrefManager(this);
@@ -71,18 +83,31 @@ public class OrderDetailsActivity extends AppCompatActivity {
             facultyRecyclerView.setLayoutManager(gridLayoutManager);
             facultySelectAdapter = new OrderDetailsAdapter(this, orderDetailsPojos);
             facultyRecyclerView.setAdapter(facultySelectAdapter);
+
+//        calculateTotalPrice();
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        callApi();
+    }
+
+    private  void callApi() {
+        hideEmpty();
         if (NetworkUtilities.isOnline(this)) {
             if (NetworkUtilities.isFast(this)) {
                 getOrdersDetails();
-            }else {
+            } else {
                 Toast.makeText(this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
             }
         } else {
             Toast.makeText(this, "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
-//        calculateTotalPrice();
-
     }
+
     HashMap<Integer, OrderDetailsPojo> paperPojoHashMap;
        void initView() {
         totalPrice = findViewById(R.id.totalPriceCart);
@@ -158,11 +183,25 @@ public class OrderDetailsActivity extends AppCompatActivity {
                         Log.d("tag", "articles total result:: " + response.body().getMessage());
                         orderDetailsPojos.clear();
                         orderDetailsPojos.addAll(response.body().data);
+
 //                        calculateTotalPrice();
                         if (orderDetailsPojos.size() == 0) {
                             showEmpty();
                         } else {
                             hideEmpty();
+
+                            String year=orderDetailsPojos.get(0).getYear();
+                            List<String> yearList =new ArrayList<>();
+                            for(int i= 0 ; i<orderDetailsPojos.size() ; i++){
+                                if (!yearList.contains(orderDetailsPojos.get(i).getYear())){
+                                    yearList.add(orderDetailsPojos.get(i).getYear());
+                                }
+                            }
+                            String faculty=orderDetailsPojos.get(0).getFaculty();
+                            String department=orderDetailsPojos.get(0).getDepartment();
+                            facultyTxt.setText(faculty );
+                            departmentTxt.setText(department );
+                            yearTxt.setText(yearList.toString() );
                         }
                         facultySelectAdapter = new OrderDetailsAdapter(OrderDetailsActivity.this, orderDetailsPojos);
                         facultyRecyclerView.setAdapter(facultySelectAdapter);

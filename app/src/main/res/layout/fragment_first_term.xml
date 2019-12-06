@@ -27,14 +27,29 @@
         android:layout_marginEnd="16dp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/emptyLayout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/emptyLayout"
+        android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="Nothing to show"
-        android:visibility="gone" />
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Nothing to show"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/refreshId"
+            android:layout_gravity="center"
+            android:src="@drawable/progress_indicators_circular"/>
+    </LinearLayout>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

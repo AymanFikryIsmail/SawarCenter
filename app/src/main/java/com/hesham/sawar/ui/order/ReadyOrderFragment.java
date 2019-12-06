@@ -3,6 +3,7 @@ package com.hesham.sawar.ui.order;
 
 import android.os.Bundle;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +21,7 @@ import com.hesham.sawar.adapter.OrderReadyAdapter;
 import com.hesham.sawar.adapter.OrderUnReadyAdapter;
 import com.hesham.sawar.data.model.OrderPojo;
 import com.hesham.sawar.data.response.OrderResponse;
+import com.hesham.sawar.databinding.FragmentReadyOrderBinding;
 import com.hesham.sawar.networkmodule.Apiservice;
 import com.hesham.sawar.networkmodule.NetworkUtilities;
 import com.hesham.sawar.utils.PrefManager;
@@ -40,11 +42,9 @@ public class ReadyOrderFragment extends Fragment  implements OrderReadyAdapter.E
 
     private List<OrderPojo> facultyPojos;
 
-    private RecyclerView facultyRecyclerView;
     private OrderReadyAdapter facultySelectAdapter;
     PrefManager prefManager;
-    TextView emptyLayout;
-    private FrameLayout progress_view;
+    private FragmentReadyOrderBinding binding;
 
     public ReadyOrderFragment() {
         // Required empty public constructor
@@ -55,22 +55,47 @@ public class ReadyOrderFragment extends Fragment  implements OrderReadyAdapter.E
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_ready_order, container, false);
-        facultyRecyclerView=view.findViewById(R.id.termRecyclerView);
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_ready_order, container, false);
+        View view = binding.getRoot();
+        binding.setLifecycleOwner(this);
+
         prefManager = new PrefManager(getContext());
-        emptyLayout=view.findViewById(R.id.emptyLayout);
         hideEmpty();
-        progress_view = view.findViewById(R.id.progress_view);
 
         facultyPojos = new ArrayList<>();
         RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext() );
-        facultyRecyclerView.setLayoutManager(gridLayoutManager);
+        binding.termRecyclerView.setLayoutManager(gridLayoutManager);
         facultySelectAdapter = new OrderReadyAdapter(getContext(),facultyPojos , ReadyOrderFragment.this);
-        facultyRecyclerView.setAdapter(facultySelectAdapter);
-        getOrders();
+        binding.termRecyclerView.setAdapter(facultySelectAdapter);
 
 
+        binding.emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callApi();
+            }
+        });
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        callApi();
+    }
+
+    private  void callApi() {
+        hideEmpty();
+        if (NetworkUtilities.isOnline(getContext())) {
+            if (NetworkUtilities.isFast(getContext())) {
+                getOrders();
+            } else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
+        }
     }
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -91,10 +116,7 @@ public class ReadyOrderFragment extends Fragment  implements OrderReadyAdapter.E
         Call<OrderResponse> call = Apiservice.getInstance().apiRequest.
                 getReadyOrders(prefManager.getCenterId());
 
-        if (NetworkUtilities.isOnline(getContext())) {
-            if (NetworkUtilities.isFast(getContext())) {
-
-            progress_view.setVisibility(View.VISIBLE);
+                binding.progressView.setVisibility(View.VISIBLE);
             call.enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
@@ -110,34 +132,29 @@ public class ReadyOrderFragment extends Fragment  implements OrderReadyAdapter.E
                             hideEmpty();
                         }
                         facultySelectAdapter = new OrderReadyAdapter(getContext(), facultyPojos, ReadyOrderFragment.this);
-                        facultyRecyclerView.setAdapter(facultySelectAdapter);
+                        binding.termRecyclerView.setAdapter(facultySelectAdapter);
                     } else {
                         showEmpty();
                     }
                 }
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
             }
             @Override
             public void onFailure(Call<OrderResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 showEmpty();
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
             }
         });
-            }else {
-                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
-            }} else {
-            Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
-        }
     }
 
 
     void showEmpty(){
-        emptyLayout.setVisibility(View.VISIBLE);
+        binding.emptyLayout.setVisibility(View.VISIBLE);
     }
     void hideEmpty(){
-        emptyLayout.setVisibility(View.GONE);
+        binding.emptyLayout.setVisibility(View.GONE);
     }
 
     @Override

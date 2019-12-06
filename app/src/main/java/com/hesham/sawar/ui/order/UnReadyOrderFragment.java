@@ -1,17 +1,22 @@
 package com.hesham.sawar.ui.order;
 
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +25,7 @@ import com.hesham.sawar.R;
 import com.hesham.sawar.adapter.OrderUnReadyAdapter;
 import com.hesham.sawar.data.model.OrderPojo;
 import com.hesham.sawar.data.response.OrderResponse;
+import com.hesham.sawar.databinding.FragmentUnReadyOrderBinding;
 import com.hesham.sawar.networkmodule.Apiservice;
 import com.hesham.sawar.networkmodule.NetworkUtilities;
 import com.hesham.sawar.utils.PrefManager;
@@ -34,41 +40,66 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UnReadyOrderFragment extends Fragment  implements OrderUnReadyAdapter.EventListener {
+public class UnReadyOrderFragment extends Fragment implements OrderUnReadyAdapter.EventListener {
 
 
     private ArrayList<OrderPojo> facultyPojos;
 
-    private RecyclerView facultyRecyclerView;
     private OrderUnReadyAdapter facultySelectAdapter;
+
     public UnReadyOrderFragment() {
         // Required empty public constructor
     }
-    TextView emptyLayout;
 
     PrefManager prefManager;
-    private FrameLayout progress_view;
+    private FragmentUnReadyOrderBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_un_ready_order, container, false);
-        facultyRecyclerView=view.findViewById(R.id.termRecyclerView);
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_un_ready_order, container, false);
+        View view = binding.getRoot();
+        binding.setLifecycleOwner(this);
+
         prefManager = new PrefManager(getContext());
-        emptyLayout=view.findViewById(R.id.emptyLayout);
         hideEmpty();
-        progress_view = view.findViewById(R.id.progress_view);
 
         facultyPojos = new ArrayList<>();
-        RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext() );
-        facultyRecyclerView.setLayoutManager(gridLayoutManager);
-        facultySelectAdapter = new OrderUnReadyAdapter(getContext(),facultyPojos ,this);
-        facultyRecyclerView.setAdapter(facultySelectAdapter);
-        getOrders();
+        RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext());
+        binding.termRecyclerView.setLayoutManager(gridLayoutManager);
+        facultySelectAdapter = new OrderUnReadyAdapter(getContext(), facultyPojos, this);
+        binding.termRecyclerView.setAdapter(facultySelectAdapter);
 
+        binding.emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callApi();
+            }
+        });
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        callApi();
+    }
+
+    private void callApi() {
+        hideEmpty();
+        if (NetworkUtilities.isOnline(getContext())) {
+            if (NetworkUtilities.isFast(getContext())) {
+                getOrders();
+            } else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -78,20 +109,18 @@ public class UnReadyOrderFragment extends Fragment  implements OrderUnReadyAdapt
 //            getAssistants();
             // If we are becoming invisible, then...
             if (!isVisibleToUser) {
-            }else {
+            } else {
                 getOrders();
             }
         }
     }
+
     public void getOrders() {//prefManager.getCenterId()
         Call<OrderResponse> call = Apiservice.getInstance().apiRequest.
                 getUnreadyOrders(prefManager.getCenterId());
-        if (NetworkUtilities.isOnline(getContext())) {
-            if (NetworkUtilities.isFast(getContext())) {
+        binding.progressView.setVisibility(View.VISIBLE);
 
-            progress_view.setVisibility(View.VISIBLE);
-
-            call.enqueue(new Callback<OrderResponse>() {
+        call.enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
                 if (response.body() != null) {
@@ -106,14 +135,14 @@ public class UnReadyOrderFragment extends Fragment  implements OrderUnReadyAdapt
                             hideEmpty();
                         }
                         facultySelectAdapter = new OrderUnReadyAdapter(getContext(), facultyPojos, UnReadyOrderFragment.this);
-                        facultyRecyclerView.setAdapter(facultySelectAdapter);
+                        binding.termRecyclerView.setAdapter(facultySelectAdapter);
                         ((OrderFragment) getParentFragment()).setNumOfUnReadyoRders(facultyPojos.size());
                     } else {
                         showEmpty();
                         ((OrderFragment) getParentFragment()).setNumOfUnReadyoRders(0);
                     }
                 }
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
 
             }
 
@@ -121,43 +150,69 @@ public class UnReadyOrderFragment extends Fragment  implements OrderUnReadyAdapt
             public void onFailure(Call<OrderResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 showEmpty();
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
             }
         });
-            }else {
-                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+
+    }
+
+    public void sum() {
+        showDialog();
+    }
+
+    private void showDialog() {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Window window = dialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.setContentView(R.layout.dialog_add_subject);
+        TextView dialogButton = dialog.findViewById(R.id.addsubject);
+        final EditText subname = dialog.findViewById(R.id.subjectname);
+        subname.setHint("Enter number of orders");
+        subname.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        // if button is clicked, close the custom dialog
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!subname.getText().toString().isEmpty()) {
+                    int num = Integer.parseInt(subname.getText().toString());
+                    ArrayList<Integer> orderIdList = new ArrayList<>();
+                    for (int i = 0; i < num; i++) {
+                        orderIdList.add(facultyPojos.get(i).getId());
+                    }
+                    Intent intent = new Intent(getContext(), OrderSumActivity.class);
+                    intent.putIntegerArrayListExtra("orderList", orderIdList);
+                    startActivity(intent);
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(getContext(), "you must enter values", Toast.LENGTH_LONG).show();
+                }
             }
-        } else {
-            Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
-        }
+        });
+
+        dialog.show();
     }
 
-    public void sum(){
-
-        Intent intent=new Intent(getContext(),OrderSumActivity.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("orderList", facultyPojos);
-        intent.putExtra("orderList", facultyPojos);
-//        startActivity(intent);
-
-    }
 
     @Override
     public void onRemove(int data) {
         ((OrderFragment) getParentFragment()).setNumOfUnReadyoRders(data);
-        if (facultyPojos.size()==0){
+        if (facultyPojos.size() == 0) {
             showEmpty();
-        }else {
+        } else {
             hideEmpty();
         }
     }
 
-    void showEmpty(){
-        emptyLayout.setVisibility(View.VISIBLE);
+    void showEmpty() {
+        binding.emptyLayout.setVisibility(View.VISIBLE);
     }
-    void hideEmpty(){
-        emptyLayout.setVisibility(View.GONE);
+
+    void hideEmpty() {
+        binding.emptyLayout.setVisibility(View.GONE);
     }
 
 }
