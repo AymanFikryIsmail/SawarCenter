@@ -87,9 +87,14 @@ public class OrderSumActivity extends AppCompatActivity {
                         Log.d("tag", "articles total result:: " + response.body().getMessage());
                         orderDetailsPojos.clear();
                         orderDetailsPojos.addAll(response.body().data);
+                         List<OrderDetailsPojo> orderSumPojos =new ArrayList<>();
+
                         if (orderDetailsPojos.size() == 0) {
                             showEmpty();
                         } else {
+//                            if (orderDetailsPojos.get(0).getP_id()){
+//                                orderSumPojos.add(orderDetailsPojos.get(i).get)
+//                            }
                             hideEmpty();
                         }
                         orderSumAdapter = new OrderSumAdapter(OrderSumActivity.this, orderDetailsPojos);

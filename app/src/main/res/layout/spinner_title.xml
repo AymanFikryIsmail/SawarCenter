@@ -13,7 +13,7 @@
         android:paddingTop="5dp"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:text="University Served"
+        android:text="Choose"
         android:textColor="@color/black"
         android:textSize="22sp"
         />

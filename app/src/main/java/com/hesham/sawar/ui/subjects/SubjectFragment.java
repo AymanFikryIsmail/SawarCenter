@@ -38,6 +38,8 @@ public class SubjectFragment extends Fragment {
         tabs = view.findViewById(R.id.tabs);
         sectionsPagerAdapter = new SubjectViewPager(getContext(), getChildFragmentManager() , years);
         viewPager.setAdapter(sectionsPagerAdapter);
+        viewPager.setCurrentItem(1);
+
         tabs.setupWithViewPager(viewPager);
         backarrowId=view.findViewById(R.id.backarrowId);
         backarrowId.setOnClickListener(new View.OnClickListener() {

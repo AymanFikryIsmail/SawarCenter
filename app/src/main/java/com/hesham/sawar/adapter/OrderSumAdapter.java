@@ -66,13 +66,10 @@ public class OrderSumAdapter extends RecyclerView.Adapter<OrderSumAdapter.MyView
 
         public void bind(final OrderDetailsPojo orderPojo) {
             String lectutre = orderPojo.getCategory();
-            String year = orderPojo.getYear();
-            String faculty = orderPojo.getFaculty();
-            String department = orderPojo.getDepartment();
 
-            ordername.setText(year + "/" + faculty + "/" + department + "/" + orderPojo.getSubject() + "/" + lectutre + "/" + orderPojo.getName());//                date.setText("date: "+orderPojo.getDate());
+            ordername.setText( orderPojo.getSubject() + "/" + lectutre + "/" + orderPojo.getName());//                date.setText("date: "+orderPojo.getDate());
 //                time.setText("Time: "+orderPojo.getDate());
-            copy.setText("" + orderPojo.getNo());
+            copy.setText("" + orderPojo.getOrderSum());
 
         }
     }

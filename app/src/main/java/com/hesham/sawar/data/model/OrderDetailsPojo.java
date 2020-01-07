@@ -28,6 +28,7 @@ public class OrderDetailsPojo {
     private String faculty;
     private String department;
 
+    private int orderSum;
 
 
     public OrderDetailsPojo(String name, String subject, int page, int sub_id, int p_id, int o_id, double price, String type) {
@@ -96,5 +97,9 @@ public class OrderDetailsPojo {
 
     public String getDepartment() {
         return department;
+    }
+
+    public int getOrderSum() {
+        return orderSum;
     }
 }

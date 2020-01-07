@@ -192,15 +192,44 @@ TextView facultyTxt, yearTxt ,  departmentTxt ;
 
                             String year=orderDetailsPojos.get(0).getYear();
                             List<String> yearList =new ArrayList<>();
+                            List<String> departmentList =new ArrayList<>();
+
                             for(int i= 0 ; i<orderDetailsPojos.size() ; i++){
                                 if (!yearList.contains(orderDetailsPojos.get(i).getYear())){
-                                    yearList.add(orderDetailsPojos.get(i).getYear());
+
+                                    if (orderDetailsPojos.get(i).getYear().equals("1")&&!yearList.contains("First year") ){
+                                        yearList.add("First year");
+
+                                    }else if(orderDetailsPojos.get(i).getYear().equals("2")&&!yearList.contains("Second year") ){
+                                        yearList.add("Second year");
+
+                                    }else if(orderDetailsPojos.get(i).getYear().equals("3")&&!yearList.contains("Third year") ){
+                                        yearList.add("Third year");
+
+                                    }else if(orderDetailsPojos.get(i).getYear().equals("4")&&!yearList.contains("Fourth year") ){
+                                        yearList.add("Fourth year");
+
+                                    }else if(orderDetailsPojos.get(i).getYear().equals("5")&&!yearList.contains("Fifth year") ){
+                                        yearList.add("Fifth year");
+
+                                    }else if(orderDetailsPojos.get(i).getYear().equals("6")&&!yearList.contains("Sixth year") ){
+                                        yearList.add("Sixth year");
+                                    }
                                 }
                             }
+
+
+                            for(int i= 0 ; i<orderDetailsPojos.size() ; i++){
+                                if (!departmentList.contains(orderDetailsPojos.get(i).getDepartment())){
+                                        departmentList.add(orderDetailsPojos.get(i).getDepartment());
+                                }
+                            }
+
+
                             String faculty=orderDetailsPojos.get(0).getFaculty();
                             String department=orderDetailsPojos.get(0).getDepartment();
                             facultyTxt.setText(faculty );
-                            departmentTxt.setText(department );
+                            departmentTxt.setText(departmentList.toString() );
                             yearTxt.setText(yearList.toString() );
                         }
                         facultySelectAdapter = new OrderDetailsAdapter(OrderDetailsActivity.this, orderDetailsPojos);
@@ -218,6 +247,7 @@ TextView facultyTxt, yearTxt ,  departmentTxt ;
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 Toast.makeText(OrderDetailsActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
                 progress_view.setVisibility(View.GONE);
+                showEmpty();
 
             }
         });

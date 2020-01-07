@@ -33,7 +33,7 @@ public class OrderFragment extends Fragment {
     TextView centername, refresh;
     PrefManager prefManager;
     UnReadyOrderFragment unReadyOrderFragment;
-    Button sum;
+    Button sum ,filter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,6 +71,25 @@ public class OrderFragment extends Fragment {
                 }
             }
         });
+
+
+        filter = view.findViewById(R.id.filter);
+        filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<Fragment> fragments = getChildFragmentManager().getFragments();
+                if (fragments != null) {
+                    for (Fragment fragment : fragments) {
+                        if (fragment instanceof UnReadyOrderFragment) {
+                            ((UnReadyOrderFragment) fragment).getFilteringDependencyOrders();
+                        } else {
+//                            ((ReadyOrderFragment) fragment).getOrders();
+                        }
+                    }
+                }
+            }
+        });
+
         refresh = view.findViewById(R.id.refresh);
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override

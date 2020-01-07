@@ -12,6 +12,7 @@ import com.hesham.sawar.R;
 import com.hesham.sawar.data.response.CheckEmployeeResponse;
 import com.hesham.sawar.data.response.FacultyResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
+import com.hesham.sawar.networkmodule.NetworkUtilities;
 import com.hesham.sawar.ui.assistant.AssistantsActivity;
 import com.hesham.sawar.ui.home.HomeActivity;
 import com.hesham.sawar.ui.login.LoginActivity;
@@ -33,10 +34,18 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if ( prefManager.getToken().equals("") ) {
+                if (prefManager.getToken().equals("")) {
                     openActivity();
-                }else {
-                    checkForEmployee();
+                } else {
+                    if (NetworkUtilities.isOnline(SplashActivity.this)) {
+                        if (NetworkUtilities.isFast(SplashActivity.this)) {
+                            checkForEmployee();
+                        } else {
+                            Toast.makeText(SplashActivity.this, "Poor network connection , please try again, then reopen the app", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(SplashActivity.this, "Please , check your network connection , then reopen the app", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         }, 1800);

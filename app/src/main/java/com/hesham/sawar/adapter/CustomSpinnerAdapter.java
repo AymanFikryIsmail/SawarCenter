@@ -69,6 +69,10 @@ public class CustomSpinnerAdapter extends BaseAdapter implements SpinnerAdapter 
         View view;
         if (position == 0) {
             view = View.inflate(context, R.layout.spinner_title, null);
+            TextView textView = (TextView) view.findViewById(R.id.dropdown);
+            if (company.size()>0){
+                textView.setText(company.get(position));
+            }
         } else {
             view = View.inflate(context, R.layout.spinner_row, null);
             TextView textView = (TextView) view.findViewById(R.id.dropdown);

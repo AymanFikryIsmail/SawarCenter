@@ -42,6 +42,15 @@
         android:id="@+id/sum"
         android:text="sum"
         android:layout_alignParentEnd="true"
+        android:layout_marginStart="5sp"
+        android:textColor="@color/black"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/filter"
+        android:text="filter"
+        android:layout_toStartOf="@+id/sum"
         android:layout_marginStart="15sp"
         android:textColor="@color/black"
         />
