@@ -1,8 +1,11 @@
 package com.hesham.sawar.ui.splash;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -10,6 +13,7 @@ import android.widget.Toast;
 
 import com.hesham.sawar.R;
 import com.hesham.sawar.data.response.CheckEmployeeResponse;
+import com.hesham.sawar.data.response.CustomResponse;
 import com.hesham.sawar.data.response.FacultyResponse;
 import com.hesham.sawar.networkmodule.Apiservice;
 import com.hesham.sawar.networkmodule.NetworkUtilities;
@@ -39,7 +43,8 @@ public class SplashActivity extends AppCompatActivity {
                 } else {
                     if (NetworkUtilities.isOnline(SplashActivity.this)) {
                         if (NetworkUtilities.isFast(SplashActivity.this)) {
-                            checkForEmployee();
+//                            checkForEmployee();
+                            checkAppUpdates();
                         } else {
                             Toast.makeText(SplashActivity.this, "Poor network connection , please try again, then reopen the app", Toast.LENGTH_LONG).show();
                         }
@@ -69,7 +74,6 @@ public class SplashActivity extends AppCompatActivity {
 
 
 
-
     public void checkForEmployee() {//prefManager.getCenterId()
         Call<CheckEmployeeResponse> call = Apiservice.getInstance().apiRequest.
                 checkForEmployee(prefManager.getUserPojo().getId());
@@ -77,20 +81,47 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<CheckEmployeeResponse> call, Response<CheckEmployeeResponse> response) {
                 if (response.body() !=null &&response.body().status ) {//response.body().status  &&
-
                     if (response.body().data){
                         openActivity();
                     }else {
                         Toast.makeText(SplashActivity.this, "You are not allowed to continue", Toast.LENGTH_LONG).show();
-                            Intent i = new Intent(SplashActivity.this, LoginActivity.class);
-                            startActivity(i);
-                            finish();
+                        Intent i = new Intent(SplashActivity.this, LoginActivity.class);
+                        startActivity(i);
+                        finish();
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<CheckEmployeeResponse> call, Throwable t) {
+                Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(SplashActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void checkAppUpdates() {//prefManager.getCenterId()
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
+                checkAppUpdates();
+        call.enqueue(new Callback<CustomResponse>() {
+            @Override
+            public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
+                if (response.body() !=null &&response.body().status ) {//response.body().status  &&
+                  double val= (double) response.body().data;
+                    if (val==0){
+                        checkForEmployee();
+
+                    }else {
+                        Intent viewIntent =
+                                new Intent("android.intent.action.VIEW",
+                                        Uri.parse("https://play.google.com/store/apps/details?id=com.hesham.sawar"));
+                        startActivity(viewIntent);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CustomResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 Toast.makeText(SplashActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
             }

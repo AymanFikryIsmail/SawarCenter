@@ -5,17 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.order.OrderFragment">
-
-    <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/sum"-->
-        <!--android:text="sum"-->
-        <!--android:visibility="invisible"-->
-        <!--android:textColor="@color/white"-->
-        <!--android:background="@drawable/custom_second_button"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_margin="5dp"/>-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,24 +25,7 @@
         android:background="@drawable/progress_indicators_circular"
         />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sum"
-        android:text="sum"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="5sp"
-        android:textColor="@color/black"
-        />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/filter"
-        android:text="filter"
-        android:layout_toStartOf="@+id/sum"
-        android:layout_marginStart="15sp"
-        android:textColor="@color/black"
-        />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
@@ -64,6 +36,37 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="5sp"
         />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sum"
+        android:text="sum"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/searchEditText"
+
+        android:layout_marginStart="5sp"
+        android:textColor="@color/black"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/filter"
+        android:text="filter"
+        android:layout_below="@+id/searchEditText"
+
+        android:layout_marginStart="15sp"
+        android:textColor="@color/black"
+        />
+    <EditText
+        android:id="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_below="@+id/view"
+
+        android:hint=" search .."
+        />
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
@@ -72,7 +75,7 @@
         app:tabIndicatorColor="@color/colorPrimary"
         app:tabSelectedTextColor="@color/colorPrimary"
         app:tabTextColor="@color/grey1"
-        android:layout_below="@+id/view"
+        android:layout_below="@+id/filter"
         />
 
     <androidx.viewpager.widget.ViewPager

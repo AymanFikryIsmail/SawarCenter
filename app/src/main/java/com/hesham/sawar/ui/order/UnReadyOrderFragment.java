@@ -50,7 +50,7 @@ public class UnReadyOrderFragment extends Fragment implements OrderUnReadyAdapte
 
     private ArrayList<OrderPojo> facultyPojos;
 
-    private OrderUnReadyAdapter facultySelectAdapter;
+    public OrderUnReadyAdapter facultySelectAdapter;
 
     int filterYera, filterF_id , selected_fid;
     Integer filterDepId;

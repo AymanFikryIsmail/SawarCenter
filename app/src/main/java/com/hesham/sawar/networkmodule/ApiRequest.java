@@ -206,6 +206,8 @@ public interface ApiRequest {
                                           @Query("year") int year,
                                           @Query("d_id") Integer d_id);
 
+    @GET("student/AppUpdates")
+    Call<CustomResponse> checkAppUpdates();
 
 }
 
